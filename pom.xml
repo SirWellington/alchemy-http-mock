@@ -25,6 +25,12 @@
         <system>GitHub Issues</system>
         <url>https://github.com/SirWellington/alchemy-http-mock/issues</url>
     </issueManagement>
+    
+    <scm>
+        <connection>scm:git:git@github.com:SirWellington/alchemy-http-mock.git</connection>
+        <developerConnection>scm:git:git@github.com:SirWellington/alchemy-http-mock.git</developerConnection>
+        <url>git@github.com:SirWellington/alchemy-http-mock.git</url>
+    </scm>
 
     <inceptionYear>2015</inceptionYear>
 
