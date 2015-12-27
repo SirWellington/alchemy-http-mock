@@ -17,6 +17,9 @@
 package tech.sirwellington.alchemy.http.mock;
 
 import com.google.gson.JsonElement;
+import com.sun.istack.internal.NotNull;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
+import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
@@ -51,28 +54,28 @@ public interface AlchemyHttpMock
     
     interface Body
     {
-        At body(Object pojo);
+        At body(@NotNull Object pojo);
         
-        At body(JsonElement jsonBody);
+        At body(@NotNull JsonElement jsonBody);
         
-        At body(String jsonString);
+        At body(@NonEmpty String jsonString);
         
         At noBody();
     }
     
     interface At
     {
-        Then at(String url);
+        Then at(@NonEmpty String url);
     }
 
     interface Then
     {
 
-        When thenDo(ExceptionOperation operation);
+        When thenDo(@NotNull ExceptionOperation operation);
 
-        When thenThrow(Throwable ex);
+        When thenThrow(@NotNull Throwable ex);
 
-        When thenReturn(Object pojo);
+        When thenReturn(@Nullable Object pojo);
 
         When thenReturnJson(JsonElement json);
 
