@@ -17,9 +17,9 @@
 package tech.sirwellington.alchemy.http.mock;
 
 import com.google.gson.JsonElement;
-import java.util.concurrent.Callable;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
 
 /**
  *
@@ -39,20 +39,36 @@ public interface AlchemyHttpMock
 
         AlchemyHttp build();
 
-        Then whenPostAt(String url);
+        Then whenPost();
 
-        Then WhenGetAt(String url);
+        Then whenGet();
 
-        Then WhenPutAt(String url);
+        Then whenPut();
 
-        Then WhenDeleteAt(String url);
+        Then whenDelete();
 
+    }
+    
+    interface Body
+    {
+        At body(Object pojo);
+        
+        At body(JsonElement jsonBody);
+        
+        At body(String jsonString);
+        
+        At noBody();
+    }
+    
+    interface At
+    {
+        Then at(String url);
     }
 
     interface Then
     {
 
-        When thenDo(Callable<?> operation);
+        When thenDo(ExceptionOperation operation);
 
         When thenThrow(Throwable ex);
 
