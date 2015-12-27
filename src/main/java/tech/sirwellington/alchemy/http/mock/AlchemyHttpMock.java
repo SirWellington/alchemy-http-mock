@@ -20,6 +20,7 @@ import com.google.gson.JsonElement;
 import com.sun.istack.internal.NotNull;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
@@ -28,6 +29,7 @@ import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
  *
  * @author SirWellington
  */
+@FluidAPIDesign
 public interface AlchemyHttpMock
 { 
     
