@@ -17,13 +17,13 @@
 package tech.sirwellington.alchemy.http.mock;
 
 import com.google.gson.JsonElement;
+import java.util.concurrent.Callable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
-import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
@@ -83,7 +83,7 @@ public interface AlchemyHttpMock
     interface Then
     {
 
-        When thenDo(@NonNull ExceptionOperation operation);
+        When thenDo(@NonNull Callable<?> operation);
 
         When thenThrow(@NonNull Throwable ex);
 

@@ -5,7 +5,7 @@
     <parent>
         <groupId>tech.sirwellington.alchemy</groupId>
         <artifactId>alchemy</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>alchemy-http-mock</artifactId>
@@ -25,7 +25,7 @@
         <system>GitHub Issues</system>
         <url>https://github.com/SirWellington/alchemy-http-mock/issues</url>
     </issueManagement>
-    
+
     <scm>
         <connection>scm:git:git@github.com:SirWellington/alchemy-http-mock.git</connection>
         <developerConnection>scm:git:git@github.com:SirWellington/alchemy-http-mock.git</developerConnection>
@@ -41,7 +41,9 @@
 
     <dependencies>
 
+        <!--=======================-->
         <!--UNIT TESTING-->
+        <!--=======================-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -59,10 +61,11 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--======================-->
-        
-        
+
+
+        <!--=======================-->
         <!--ALCHEMY-->
+        <!--=======================-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-arguments</artifactId>
@@ -75,7 +78,7 @@
             <version>1.3.1</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-http</artifactId>
@@ -94,10 +97,11 @@
             <artifactId>alchemy-annotations</artifactId>
             <version>1.3.1</version>
         </dependency>
-        <!--======================-->
 
 
+        <!--=======================-->
         <!--LOGGING-->
+        <!--=======================-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -108,15 +112,16 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--======================-->
 
+
+        <!--=======================-->
         <!--GSON-->
+        <!--=======================-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-        <!--======================-->
-    
+
     </dependencies>
 
 
