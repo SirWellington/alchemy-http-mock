@@ -42,8 +42,7 @@ public interface AlchemyHttpMock
     
     static When begin()
     {
-        
-        return null;
+        return new AlchemyHttpMockImpl();
     }
     
     static void verifyAllRequestsMade(AlchemyHttp mockHttp) throws IllegalArgumentException
@@ -51,6 +50,9 @@ public interface AlchemyHttpMock
         checkThat(mockHttp)
             .usingMessage("Can only verify with AlchemyHttp generated from AlchemyHttpMock")
             .is(instanceOf(MockAlchemyHttp.class));
+        
+        MockAlchemyHttp mock = (MockAlchemyHttp) mockHttp;
+        mock.verifyAllRequestsMade();
     }
     
     interface When

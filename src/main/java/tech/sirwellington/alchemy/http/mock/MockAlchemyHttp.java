@@ -16,32 +16,47 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
-import java.net.URL;
+import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
-import tech.sirwellington.alchemy.http.HttpResponse;
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
  *
  * @author SirWellington
  */
 @Internal
-final class MockAlchemyHttp implements AlchemyHttp
+class MockAlchemyHttp implements AlchemyHttp
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(MockAlchemyHttp.class);
 
-    private MockRequest currentRequest;
+    MockRequest currentRequest = new MockRequest();
 
+    private final Map<MockRequest, Callable<?>> expectedActions = Maps.newConcurrentMap();
+
+    private final Map<MockRequest, Callable<?>> actionsMade = Maps.newConcurrentMap();
+
+    MockAlchemyHttp(Map<MockRequest, Callable<?>> expectedActions)
+    {
+        checkThat(expectedActions)
+            .is(notNull());
+        
+        this.expectedActions.putAll(expectedActions);
+    }
+
+    
+    
     /**
      * This operation allows the Mock internal steps to signal when a request is done. A Request is done when one of the {@link AlchemyRequest}
      * {@link AlchemyRequest.Step3#at(java.lang.String) } methods have been called.
@@ -49,7 +64,18 @@ final class MockAlchemyHttp implements AlchemyHttp
     @Internal
     void done()
     {
-
+        
+        
+        //Current Request is now null
+        currentRequest = null;
+    }
+    
+    @Internal
+    void addActionMade(Callable<?> action)
+    {
+        checkThat(action).is(notNull());
+        
+        actionsMade.put(currentRequest, action);
     }
 
     @Override
@@ -67,139 +93,15 @@ final class MockAlchemyHttp implements AlchemyHttp
     @Override
     public AlchemyRequest.Step1 go()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new MockSteps.MockStep1(this);
     }
 
-    static class MockStep1 implements AlchemyRequest.Step1
+    void verifyAllRequestsMade()
     {
-
-        private final MockAlchemyHttp mockHttp;
-
-        MockStep1(MockAlchemyHttp mockHttp)
+        for (MockRequest request : expectedActions.keySet())
         {
-            this.mockHttp = mockHttp;
+            assertThat(actionsMade, hasKey(request));
         }
-
-        @Override
-        public AlchemyRequest.Step3 get()
-        {
-            mockHttp.currentRequest.method = MockRequest.Method.GET;
-            return new MockStep3(mockHttp);
-        }
-
-        @Override
-        public AlchemyRequest.Step2 post()
-        {
-            mockHttp.currentRequest.method = MockRequest.Method.POST;
-
-            return new MockStep2(mockHttp);
-        }
-
-        @Override
-        public AlchemyRequest.Step2 put()
-        {
-            mockHttp.currentRequest.method = MockRequest.Method.PUT;
-
-            return new MockStep2(mockHttp);
-        }
-
-        @Override
-        public AlchemyRequest.Step2 delete()
-        {
-            mockHttp.currentRequest.method = MockRequest.Method.DELETE;
-
-            return new MockStep2(mockHttp);
-        }
-
-    }
-
-    static class MockStep2 implements AlchemyRequest.Step2
-    {
-
-        private final MockAlchemyHttp mockAlchemyHttp;
-
-        MockStep2(MockAlchemyHttp mockAlchemyHttp)
-        {
-            this.mockAlchemyHttp = mockAlchemyHttp;
-        }
-
-        @Override
-        public AlchemyRequest.Step3 nothing()
-        {
-            mockAlchemyHttp.currentRequest.body = null;
-
-            return new MockStep3(mockAlchemyHttp);
-        }
-
-        @Override
-        public AlchemyRequest.Step3 body(String jsonString) throws IllegalArgumentException
-        {
-            checkThat(jsonString)
-                .usingMessage("jsonString cannot be empty")
-                .is(nonEmptyString());
-
-            mockAlchemyHttp.currentRequest.body = jsonString;
-
-            return new MockStep3(mockAlchemyHttp);
-        }
-
-        @Override
-        public AlchemyRequest.Step3 body(Object pojo) throws IllegalArgumentException
-        {
-            mockAlchemyHttp.currentRequest.body = pojo;
-            
-            return new MockStep3(mockAlchemyHttp);
-        }
-
-    }
-
-    static class MockStep3 implements AlchemyRequest.Step3
-    {
-
-        private final MockAlchemyHttp mockAlchemyHttp;
-
-        MockStep3(MockAlchemyHttp mockAlchemyHttp)
-        {
-            this.mockAlchemyHttp = mockAlchemyHttp;
-        }
-
-        @Override
-        public AlchemyRequest.Step3 usingHeader(String key, String value) throws IllegalArgumentException
-        {
-            return this;
-        }
-
-        @Override
-        public AlchemyRequest.Step3 usingQueryParam(String name, String value) throws IllegalArgumentException
-        {
-            return this;
-        }
-
-        @Override
-        public AlchemyRequest.Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
-        {
-            return this;
-        }
-
-        @Override
-        public HttpResponse at(URL url) throws AlchemyHttpException
-        {
-            return null;
-        }
-
-        @Override
-        public AlchemyRequest.Step5<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccessCallback)
-        {
-            return null;
-        }
-
-        @Override
-        public <ResponseType> AlchemyRequest.Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws
-            IllegalArgumentException
-        {
-            return null;
-        }
-
     }
 
 }

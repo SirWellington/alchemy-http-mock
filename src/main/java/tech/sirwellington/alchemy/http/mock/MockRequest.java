@@ -28,7 +28,7 @@ import tech.sirwellington.alchemy.annotations.objects.Pojo;
 @Pojo
 class MockRequest
 {
-
+    
     enum Method
     {
         GET,
@@ -37,6 +37,10 @@ class MockRequest
         DELETE
     }
 
+    static final Object NO_BODY = new Object();
+    
+    static final Object ANY_BODY = new Object();
+   
     URL url;
     Method method;
     Object body;
