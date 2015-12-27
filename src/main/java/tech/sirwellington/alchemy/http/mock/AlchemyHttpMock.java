@@ -25,6 +25,9 @@ import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
 
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
+
 /**
  *
  * @author SirWellington
@@ -37,6 +40,13 @@ public interface AlchemyHttpMock
     {
         
         return null;
+    }
+    
+    static void verifyAllRequestsMade(AlchemyHttp mockHttp) throws IllegalArgumentException
+    {
+        checkThat(mockHttp)
+            .usingMessage("Can only verify with AlchemyHttp generated from AlchemyHttpMock")
+            .is(instanceOf(MockAlchemyHttp.class));
     }
 
     interface When
