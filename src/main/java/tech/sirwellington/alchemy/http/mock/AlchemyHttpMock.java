@@ -56,9 +56,9 @@ public interface AlchemyHttpMock
     
     interface Body
     {
-        At body(@NotNull Object pojo);
+        At body(@NonNull Object pojo);
         
-        At body(@NotNull JsonElement jsonBody);
+        At body(@NonNull JsonElement jsonBody);
         
         At body(@NonEmpty String jsonString);
         
