@@ -225,7 +225,7 @@ class MockAlchemyHttp implements AlchemyHttp
 
     private boolean matchEverythingBesidesTheBody(MockRequest first, MockRequest second)
     {
-        return Objects.equals(first.method, second.body) &&
+        return Objects.equals(first.method, second.method) &&
                Objects.equals(first.url, second.url) &&
                Objects.equals(first.queryParams, second.queryParams);
     }
