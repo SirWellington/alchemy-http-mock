@@ -43,8 +43,8 @@ class MockSteps
     static class MockStep1 implements AlchemyRequest.Step1
     {
 
-        private final MockAlchemyHttp mockHttp;
-        private final MockRequest request = new MockRequest();
+        final MockAlchemyHttp mockHttp;
+        final MockRequest request = new MockRequest();
 
         MockStep1(MockAlchemyHttp mockHttp)
         {
@@ -90,8 +90,8 @@ class MockSteps
     static class MockStep2 implements AlchemyRequest.Step2
     {
 
-        private final MockAlchemyHttp mockAlchemyHttp;
-        private final MockRequest request;
+        MockAlchemyHttp mockAlchemyHttp;
+        MockRequest request;
 
         MockStep2(MockAlchemyHttp mockAlchemyHttp, MockRequest request)
         {
@@ -136,8 +136,8 @@ class MockSteps
     static class MockStep3 implements AlchemyRequest.Step3
     {
 
-        private final MockAlchemyHttp mockAlchemyHttp;
-        private final MockRequest request;
+        final MockAlchemyHttp mockAlchemyHttp;
+        final MockRequest request;
 
         MockStep3(MockAlchemyHttp mockAlchemyHttp, MockRequest request)
         {
@@ -196,9 +196,9 @@ class MockSteps
     static class MockStep4<R> implements AlchemyRequest.Step4<R>
     {
 
-        private final MockAlchemyHttp mockAlchemyHttp;
-        private final MockRequest request;
-        private final Class<R> expectedClass;
+        final MockAlchemyHttp mockAlchemyHttp;
+        final MockRequest request;
+        final Class<R> expectedClass;
 
         MockStep4(MockAlchemyHttp mockAlchemyHttp, MockRequest request, Class<R> expectedClass)
         {
