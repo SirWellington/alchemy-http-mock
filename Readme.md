@@ -20,6 +20,7 @@ You can Stub Behavior using Mockito style syntax.
 To use, simply add the following maven dependency.
 
 ## Release
+> NOTE: Still not released yet.
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
