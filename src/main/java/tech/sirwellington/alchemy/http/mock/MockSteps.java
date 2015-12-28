@@ -19,12 +19,15 @@ package tech.sirwellington.alchemy.http.mock;
 import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY;
 
 /**
@@ -36,65 +39,75 @@ class MockSteps
 
     private final static Logger LOG = LoggerFactory.getLogger(MockSteps.class);
 
+    @StepMachineDesign(role = STEP)
     static class MockStep1 implements AlchemyRequest.Step1
     {
 
         private final MockAlchemyHttp mockHttp;
+        private final MockRequest request = new MockRequest();
 
         MockStep1(MockAlchemyHttp mockHttp)
         {
+            checkThat(mockHttp).is(notNull());
+
             this.mockHttp = mockHttp;
         }
 
         @Override
         public AlchemyRequest.Step3 get()
         {
-            mockHttp.currentRequest.method = MockRequest.Method.GET;
-            return new MockStep3(mockHttp);
+            request.method = MockRequest.Method.GET;
+            return new MockStep3(mockHttp, request);
         }
 
         @Override
         public AlchemyRequest.Step2 post()
         {
-            mockHttp.currentRequest.method = MockRequest.Method.POST;
+            request.method = MockRequest.Method.POST;
 
-            return new MockStep2(mockHttp);
+            return new MockStep2(mockHttp, request);
         }
 
         @Override
         public AlchemyRequest.Step2 put()
         {
-            mockHttp.currentRequest.method = MockRequest.Method.PUT;
+            request.method = MockRequest.Method.PUT;
 
-            return new MockStep2(mockHttp);
+            return new MockStep2(mockHttp, request);
         }
 
         @Override
         public AlchemyRequest.Step2 delete()
         {
-            mockHttp.currentRequest.method = MockRequest.Method.DELETE;
+            request.method = MockRequest.Method.DELETE;
 
-            return new MockStep2(mockHttp);
+            return new MockStep2(mockHttp, request);
         }
 
     }
 
+    @StepMachineDesign(role = STEP)
     static class MockStep2 implements AlchemyRequest.Step2
     {
 
         private final MockAlchemyHttp mockAlchemyHttp;
+        private final MockRequest request;
 
-        MockStep2(MockAlchemyHttp mockAlchemyHttp)
+        MockStep2(MockAlchemyHttp mockAlchemyHttp, MockRequest request)
         {
+            checkThat(mockAlchemyHttp, request)
+                .are(notNull());
+
             this.mockAlchemyHttp = mockAlchemyHttp;
+            this.request = request;
         }
 
         @Override
         public AlchemyRequest.Step3 nothing()
         {
-            mockAlchemyHttp.currentRequest.body = NO_BODY;
+            request.body = NO_BODY;
 
-            return new MockStep3(mockAlchemyHttp);
+            return new MockStep3(mockAlchemyHttp, request);
         }
 
         @Override
@@ -104,29 +117,35 @@ class MockSteps
                 .usingMessage("jsonString cannot be empty")
                 .is(nonEmptyString());
 
-            mockAlchemyHttp.currentRequest.body = jsonString;
+            request.body = jsonString;
 
-            return new MockStep3(mockAlchemyHttp);
+            return new MockStep3(mockAlchemyHttp, request);
         }
 
         @Override
         public AlchemyRequest.Step3 body(Object pojo) throws IllegalArgumentException
         {
-            mockAlchemyHttp.currentRequest.body = pojo;
+            request.body = pojo;
 
-            return new MockStep3(mockAlchemyHttp);
+            return new MockStep3(mockAlchemyHttp, request);
         }
 
     }
 
+    @StepMachineDesign(role = STEP)
     static class MockStep3 implements AlchemyRequest.Step3
     {
 
         private final MockAlchemyHttp mockAlchemyHttp;
+        private final MockRequest request;
 
-        MockStep3(MockAlchemyHttp mockAlchemyHttp)
+        MockStep3(MockAlchemyHttp mockAlchemyHttp, MockRequest request)
         {
+            checkThat(mockAlchemyHttp, request)
+                .are(notNull());
+
             this.mockAlchemyHttp = mockAlchemyHttp;
+            this.request = request;
         }
 
         @Override
@@ -150,7 +169,12 @@ class MockSteps
         @Override
         public HttpResponse at(URL url) throws AlchemyHttpException
         {
-            return null;
+            checkThat(url)
+                .usingMessage("missing url")
+                .is(notNull());
+
+            request.url = url;
+            return mockAlchemyHttp.getResponseFor(request);
         }
 
         @Override
@@ -163,7 +187,136 @@ class MockSteps
         public <ResponseType> AlchemyRequest.Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws
             IllegalArgumentException
         {
-            return null;
+            return new MockStep4<>(mockAlchemyHttp, this.request, classOfResponseType);
+        }
+
+    }
+
+    @StepMachineDesign(role = STEP)
+    static class MockStep4<R> implements AlchemyRequest.Step4<R>
+    {
+
+        private final MockAlchemyHttp mockAlchemyHttp;
+        private final MockRequest request;
+        private final Class<R> expectedClass;
+
+        MockStep4(MockAlchemyHttp mockAlchemyHttp, MockRequest request, Class<R> expectedClass)
+        {
+            checkThat(mockAlchemyHttp, request, expectedClass)
+                .are(notNull());
+
+            this.mockAlchemyHttp = mockAlchemyHttp;
+            this.request = request;
+            this.expectedClass = expectedClass;
+        }
+
+        @Override
+        public R at(URL url) throws IllegalArgumentException, AlchemyHttpException
+        {
+            checkThat(url).usingMessage("url cannot be null").is(notNull());
+            request.url = url;
+
+            return mockAlchemyHttp.getResponseFor(request, expectedClass);
+        }
+
+        @Override
+        public AlchemyRequest.Step5<R> onSuccess(AlchemyRequest.OnSuccess<R> onSuccessCallback)
+        {
+            checkThat(onSuccessCallback)
+                .usingMessage("callback cannot be null")
+                .is(notNull());
+            
+            return new MockStep5<>(mockAlchemyHttp, onSuccessCallback, expectedClass, request);
+        }
+
+    }
+
+    @StepMachineDesign(role = STEP)
+    static class MockStep5<R> implements AlchemyRequest.Step5<R>
+    {
+
+        private final MockAlchemyHttp mockAlchemyHttp;
+        private final AlchemyRequest.OnSuccess<R> onSuccessCallback;
+        private final Class<R> expectedClass;
+        private final MockRequest request;
+
+        MockStep5(MockAlchemyHttp mockAlchemyHttp,
+              AlchemyRequest.OnSuccess<R> onSuccessCallback,
+              Class<R> expectedClass,
+              MockRequest request)
+        {
+            checkThat(mockAlchemyHttp,onSuccessCallback, expectedClass, request)
+                .are(notNull());
+            
+            this.mockAlchemyHttp = mockAlchemyHttp;
+            this.onSuccessCallback = onSuccessCallback;
+            this.expectedClass = expectedClass;
+            this.request = request;
+        }
+
+        @Override
+        public AlchemyRequest.Step6<R> onFailure(AlchemyRequest.OnFailure onFailureCallback)
+        {
+            checkThat(onFailureCallback)
+                .usingMessage("callback cannot be null")
+                .is(notNull());
+
+            return new MockStep6<>(mockAlchemyHttp,
+                                   onSuccessCallback,
+                                   onFailureCallback,
+                                   expectedClass,
+                                   request);
+        }
+
+    }
+
+    static class MockStep6<R> implements AlchemyRequest.Step6<R>
+    {
+
+        private final MockAlchemyHttp mockAlchemyHttp;
+        private final AlchemyRequest.OnSuccess<R> onSuccessCallback;
+        private final AlchemyRequest.OnFailure onFailureCallback;
+        private final Class<R> expectedClass;
+        private final MockRequest request;
+
+        public MockStep6(MockAlchemyHttp mockAlchemyHttp, 
+                         AlchemyRequest.OnSuccess<R> onSuccessCallback,
+                         AlchemyRequest.OnFailure onFailureCallback, 
+                         Class<R> expectedClass, 
+                         MockRequest request)
+        {
+            checkThat(mockAlchemyHttp, onSuccessCallback, onFailureCallback, expectedClass, request)
+                .are(notNull());
+            
+            this.mockAlchemyHttp = mockAlchemyHttp;
+            this.onSuccessCallback = onSuccessCallback;
+            this.onFailureCallback = onFailureCallback;
+            this.expectedClass = expectedClass;
+            this.request = request;
+        }
+
+     
+
+        @Override
+        public void at(URL url)
+        {
+            checkThat(url)
+                .usingMessage("url cannot be null")
+                .is(notNull());
+            
+            request.url = url;
+        
+            R response;
+            try
+            {
+                response = mockAlchemyHttp.getResponseFor(request, expectedClass);
+                onSuccessCallback.processResponse(response);
+            }
+            catch (Exception ex)
+            {
+                AlchemyHttpException alchemyException = new AlchemyHttpException(ex);
+                onFailureCallback.handleError(alchemyException);
+            }
         }
 
     }

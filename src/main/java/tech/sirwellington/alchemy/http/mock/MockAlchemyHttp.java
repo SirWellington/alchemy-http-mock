@@ -16,66 +16,50 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
+import static java.lang.String.format;
+import static junit.framework.Assert.fail;
+import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.keyInMap;
 
 /**
  *
  * @author SirWellington
  */
 @Internal
+@StepMachineDesign(role = MACHINE)
 class MockAlchemyHttp implements AlchemyHttp
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(MockAlchemyHttp.class);
 
-    MockRequest currentRequest = new MockRequest();
-
     private final Map<MockRequest, Callable<?>> expectedActions = Maps.newConcurrentMap();
 
-    private final Map<MockRequest, Callable<?>> actionsMade = Maps.newConcurrentMap();
+    private final List<MockRequest> requestsMade = Lists.newArrayList();
 
     MockAlchemyHttp(Map<MockRequest, Callable<?>> expectedActions)
     {
         checkThat(expectedActions)
             .is(notNull());
-        
-        this.expectedActions.putAll(expectedActions);
-    }
 
-    
-    
-    /**
-     * This operation allows the Mock internal steps to signal when a request is done. A Request is done when one of the {@link AlchemyRequest}
-     * {@link AlchemyRequest.Step3#at(java.lang.String) } methods have been called.
-     */
-    @Internal
-    void done()
-    {
-        
-        
-        //Current Request is now null
-        currentRequest = null;
-    }
-    
-    @Internal
-    void addActionMade(Callable<?> action)
-    {
-        checkThat(action).is(notNull());
-        
-        actionsMade.put(currentRequest, action);
+        this.expectedActions.putAll(expectedActions);
     }
 
     @Override
@@ -96,11 +80,79 @@ class MockAlchemyHttp implements AlchemyHttp
         return new MockSteps.MockStep1(this);
     }
 
+    @Internal
+    HttpResponse getResponseFor(MockRequest request) throws AlchemyHttpException
+    {
+        checkThat(request)
+            .is(notNull())
+            .usingMessage("unexpected request: " + request)
+            .is(keyInMap(expectedActions));
+
+        Callable<?> action = expectedActions.get(request);
+
+        Object response;
+        try
+        {
+            response = action.call();
+        }
+        catch (Exception ex)
+        {
+            throw new AlchemyHttpException(ex);
+        }
+
+        checkThat(response)
+            .usingMessage(format("Response Type Wanted: %s but actual: null", HttpResponse.class))
+            .is(notNull())
+            .usingMessage(format("Response Type Wanted: %s but actual: %s", HttpResponse.class, response.getClass()))
+            .is(instanceOf(HttpResponse.class));
+
+        return (HttpResponse) response;
+    }
+
+    @Internal
+    <T> T getResponseFor(MockRequest request, Class<T> expectedClass) throws AlchemyHttpException
+    {
+        checkThat(request, expectedClass)
+            .are(notNull());
+
+        checkThat(request)
+            .usingMessage("Request not expected: " + request)
+            .is(keyInMap(expectedActions));
+
+        Callable<?> operation = expectedActions.get(request);
+
+        Object responseObject;
+        try
+        {
+            responseObject = operation.call();
+        }
+        catch (Exception ex)
+        {
+            throw new AlchemyHttpException(ex);
+        }
+
+        if (responseObject == null)
+        {
+            return (T) responseObject;
+        }
+
+        checkThat(responseObject)
+            .usingMessage(format("Response Type Wanted: %s but actual: %s", responseObject.getClass(), expectedClass))
+            .is(instanceOf(expectedClass));
+
+        return (T) responseObject;
+
+    }
+
+    @Internal
     void verifyAllRequestsMade()
     {
         for (MockRequest request : expectedActions.keySet())
         {
-            assertThat(actionsMade, hasKey(request));
+            if (!requestsMade.contains(request))
+            {
+                fail(format("Request never made: %s", request));
+            }
         }
     }
 

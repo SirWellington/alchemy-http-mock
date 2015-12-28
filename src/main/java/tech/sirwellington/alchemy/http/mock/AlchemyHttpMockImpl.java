@@ -34,6 +34,7 @@ import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.DELETE;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.GET;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.POST;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.PUT;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 
 class AlchemyHttpMockImpl implements AlchemyHttpMock,
                                      AlchemyHttpMock.When,
