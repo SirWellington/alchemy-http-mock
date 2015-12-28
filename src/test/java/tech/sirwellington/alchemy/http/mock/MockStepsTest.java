@@ -16,12 +16,14 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
+import java.net.URL;
 import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep1;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep2;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep3;
@@ -35,7 +37,10 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.NetworkGenerators.httpUrls;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -53,9 +58,12 @@ public class MockStepsTest
 
     @GeneratePojo
     private MockRequest request;
-    
+
     @GenerateDate
     private Date date;
+    
+    @Mock
+    private HttpResponse httpResponse;
 
     @Before
     public void setUp()
@@ -97,7 +105,7 @@ public class MockStepsTest
     public void testStep1Put()
     {
         MockStep1 step1 = new MockStep1(mockHttp);
-        
+
         AlchemyRequest.Step2 put = step1.put();
         assertThat(put, notNullValue());
         assertThat(put, is(instanceOf(MockStep2.class)));
@@ -109,80 +117,114 @@ public class MockStepsTest
     public void testStep1Delete()
     {
         MockStep1 step1 = new MockStep1(mockHttp);
-        
+
         AlchemyRequest.Step2 delete = step1.delete();
         assertThat(delete, notNullValue());
         assertThat(delete, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) delete;
         assertThat(mockStep2.request.method, is(MockRequest.Method.DELETE));
     }
-    
+
     @DontRepeat
     @Test
     public void testStep2Constructor()
     {
         assertThrows(() -> new MockStep2(null, request))
             .isInstanceOf(IllegalArgumentException.class);
-        
+
         assertThrows(() -> new MockStep2(mockHttp, null))
             .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     public void testStep2WithNoBody()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
-        
+
         AlchemyRequest.Step3 nothing = step2.nothing();
         assertThat(nothing, notNullValue());
         assertThat(nothing, is(instanceOf(MockStep3.class)));
-        
+
         MockStep3 step3 = (MockStep3) nothing;
         assertThat(step3.mockAlchemyHttp, is(mockHttp));
         assertThat(step3.request.method, is(request.method));
         assertThat(step3.request.body, is(MockRequest.NO_BODY));
     }
-    
+
     @Test
     public void testStep2WithPojo()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
-        
+
         AlchemyRequest.Step3 body = step2.body(date);
         assertThat(body, notNullValue());
         assertThat(body, is(instanceOf(MockStep3.class)));
-        
+
         MockStep3 step3 = (MockStep3) body;
         assertThat(step3.mockAlchemyHttp, is(mockHttp));
         assertThat(step3.request.method, is(request.method));
         assertThat(step3.request.body, is(date));
     }
-    
+
     @DontRepeat
     @Test
     public void testStep2WithNullPojo()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
-        
+
         assertThrows(() -> step2.body(null))
             .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     public void testStep2WithString()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
-        
+
         String string = one(strings());
         AlchemyRequest.Step3 body = step2.body(string);
-         assertThat(body, notNullValue());
+        assertThat(body, notNullValue());
         assertThat(body, is(instanceOf(MockStep3.class)));
-        
+
         MockStep3 step3 = (MockStep3) body;
         assertThat(step3.mockAlchemyHttp, is(mockHttp));
         assertThat(step3.request.method, is(request.method));
         assertThat(step3.request.body, is(string));
     }
-    
 
+    @DontRepeat
+    @Test
+    public void testStep3Constructor()
+    {
+        assertThrows(() -> new MockStep3(mockHttp, null))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> new MockStep3(null, request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testStep3()
+    {
+        MockStep3 step3 = new MockStep3(mockHttp, request);
+
+    }
+
+    @Test
+    public void testStep3At()
+    {
+        MockStep3 step3 = new MockStep3(mockHttp, request);
+        URL url = one(httpUrls());
+        
+        when(mockHttp.getResponseFor(request))
+            .thenReturn(httpResponse);
+        
+        HttpResponse response = step3.at(url);
+        assertThat(request.url, is(url));
+        verify(mockHttp).getResponseFor(request);
+        
+        assertThrows(() -> step3.at((URL) null))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+    
 }
