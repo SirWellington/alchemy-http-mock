@@ -37,6 +37,11 @@ final class Actions
 
     private final static Logger LOG = LoggerFactory.getLogger(Actions.class);
 
+    static <T> Callable<T> returnNull()
+    {
+        return () -> null;
+    }
+    
     static <T> Callable<JsonElement> returnPojo(T pojo, Gson gson)
     {
         return () -> gson.toJsonTree(pojo);
