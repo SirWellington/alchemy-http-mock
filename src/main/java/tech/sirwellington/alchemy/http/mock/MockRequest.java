@@ -36,7 +36,7 @@ class MockRequest
         PUT,
         DELETE
     }
-
+    
     static final Object NO_BODY = new Object();
     
     static final Object ANY_BODY = new Object();

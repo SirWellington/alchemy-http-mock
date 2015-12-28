@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
@@ -37,7 +38,7 @@ import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.R
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.keyInMap;
+import static tech.sirwellington.alchemy.http.mock.MockRequest.ANY_BODY;
 
 /**
  *
@@ -85,8 +86,7 @@ class MockAlchemyHttp implements AlchemyHttp
     {
         checkThat(request)
             .is(notNull())
-            .usingMessage("unexpected request: " + request)
-            .is(keyInMap(expectedActions));
+            .is(expectedRequest());
 
         Callable<?> action = expectedActions.get(request);
 
@@ -116,8 +116,7 @@ class MockAlchemyHttp implements AlchemyHttp
             .are(notNull());
 
         checkThat(request)
-            .usingMessage("Request not expected: " + request)
-            .is(keyInMap(expectedActions));
+            .is(expectedRequest());
 
         Callable<?> operation = expectedActions.get(request);
 
@@ -147,13 +146,83 @@ class MockAlchemyHttp implements AlchemyHttp
     @Internal
     void verifyAllRequestsMade()
     {
-        for (MockRequest request : expectedActions.keySet())
+        expected:
+        for (MockRequest expectedRequest : expectedActions.keySet())
         {
-            if (!requestsMade.contains(request))
+            made:
+            for (MockRequest requestMade : requestsMade)
             {
-                fail(format("Request never made: %s", request));
+                if (matchEverythingBesidesTheBody(expectedRequest, requestMade))
+                {
+                    continue expected;
+                }
+            }
+
+            //Reaching here means no match was found
+            fail("Request never made: " + expectedRequest);
+        }
+    }
+
+    private AlchemyAssertion<MockRequest> expectedRequest()
+    {
+        return request ->
+        {
+            checkThat(request)
+                .is(notNull());
+            
+            Callable<?> action = findMatchingActionFor(request);
+            
+            checkThat(action)
+                .usingMessage("Request was unexpected: " + request)
+                .is(notNull());
+        };
+    }
+
+    private Callable<?> findMatchingActionFor(MockRequest request)
+    {
+        Callable<?> foundInMap = expectedActions.get(request);
+
+        if (foundInMap != null)
+        {
+            return foundInMap;
+        }
+
+        for (MockRequest element : expectedActions.keySet())
+        {
+            if (requestsMatch(element, request))
+            {
+                return expectedActions.get(element);
             }
         }
+
+        return null;
+    }
+
+    private boolean requestsMatch(MockRequest expected, MockRequest actual)
+    {
+        boolean matchEverythingBesidesTheBody = matchEverythingBesidesTheBody(expected, actual);
+
+        if (!matchEverythingBesidesTheBody)
+        {
+            return false;
+        }
+
+        if (expected.body == ANY_BODY)
+        {
+            return true;
+        }
+
+        /*
+         * The bodies will be both null, or both set to NO_BODY. == is intentionally used to compare instances.
+         */
+        return expected.body == actual.body;
+    }
+
+    private boolean matchEverythingBesidesTheBody(MockRequest element, MockRequest request)
+    {
+        return element.method == request.method &&
+               element.url.equals(request.url) &&
+               element.queryParams.equals(request.queryParams);
     }
 
 }

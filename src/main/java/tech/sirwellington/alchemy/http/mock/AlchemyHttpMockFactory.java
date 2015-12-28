@@ -25,17 +25,15 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
+import tech.sirwellington.alchemy.http.HttpRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.DELETE;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.GET;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.POST;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.PUT;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 
 class AlchemyHttpMockFactory implements AlchemyHttpMock,
@@ -51,6 +49,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     private final Map<MockRequest, Callable<?>> actions = Maps.newConcurrentMap();
 
     private MockRequest currentExpectedRequest;
+    private HttpRequest httpRequest;
 
     @Override
     public AlchemyHttp build()
@@ -63,6 +62,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     {
         currentExpectedRequest = new MockRequest();
         currentExpectedRequest.method = POST;
+        httpRequest = HttpRequest.Builder.newInstance().build();
 
         return this;
     }
