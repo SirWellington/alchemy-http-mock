@@ -35,6 +35,8 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -168,6 +170,16 @@ public class MockStepsTest
     public void testStep2WithString()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
+        
+        String string = one(strings());
+        AlchemyRequest.Step3 body = step2.body(string);
+         assertThat(body, notNullValue());
+        assertThat(body, is(instanceOf(MockStep3.class)));
+        
+        MockStep3 step3 = (MockStep3) body;
+        assertThat(step3.mockAlchemyHttp, is(mockHttp));
+        assertThat(step3.request.method, is(request.method));
+        assertThat(step3.request.body, is(string));
     }
     
 
