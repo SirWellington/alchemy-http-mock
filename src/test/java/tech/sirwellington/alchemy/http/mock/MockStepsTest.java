@@ -157,6 +157,8 @@ public class MockStepsTest
         assertThat(step3.request.method, is(request.method));
         assertThat(step3.request.body, is(date));
     }
+    
+    @DontRepeat
     @Test
     public void testStep2WithNullPojo()
     {
