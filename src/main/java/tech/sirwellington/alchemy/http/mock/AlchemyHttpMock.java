@@ -31,6 +31,7 @@ import tech.sirwellington.alchemy.http.HttpResponse;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 
 /**
  *
@@ -42,7 +43,7 @@ public interface AlchemyHttpMock
     
     static When begin()
     {
-        return new AlchemyHttpMockImpl();
+        return new AlchemyHttpMockFactory();
     }
     
     static void verifyAllRequestsMade(AlchemyHttp mockHttp) throws IllegalArgumentException

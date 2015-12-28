@@ -35,15 +35,17 @@ import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.GET;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.POST;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.PUT;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 
-class AlchemyHttpMockImpl implements AlchemyHttpMock,
+class AlchemyHttpMockFactory implements AlchemyHttpMock,
                                      AlchemyHttpMock.When,
                                      AlchemyHttpMock.Body,
                                      AlchemyHttpMock.At,
                                      AlchemyHttpMock.Then
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(AlchemyHttpMockImpl.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AlchemyHttpMockFactory.class);
     private final Gson gson = new Gson();
 
     private final Map<MockRequest, Callable<?>> actions = Maps.newConcurrentMap();
