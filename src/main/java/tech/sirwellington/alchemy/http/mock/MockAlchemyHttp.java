@@ -88,7 +88,9 @@ class MockAlchemyHttp implements AlchemyHttp
         checkThat(request)
             .is(notNull())
             .is(expectedRequest());
-
+        
+        requestsMade.add(request);
+        
         Callable<?> action = expectedActions.get(request);
 
         Object response;
@@ -115,6 +117,8 @@ class MockAlchemyHttp implements AlchemyHttp
     {
         checkThat(request, expectedClass)
             .are(notNull());
+
+        requestsMade.add(request);
 
         checkThat(request)
             .is(expectedRequest());
