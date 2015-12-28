@@ -110,5 +110,43 @@ public class MockStepsTest
         assertThat(mockStep2.request.method, is(MockRequest.Method.DELETE));
     }
     
+    @DontRepeat
+    @Test
+    public void testStep2Constructor()
+    {
+        assertThrows(() -> new MockStep2(null, request))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+        assertThrows(() -> new MockStep2(mockHttp, null))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
+    public void testStep2WithNoBody()
+    {
+        MockStep2 step2 = new MockStep2(mockHttp, request);
+        
+        AlchemyRequest.Step3 nothing = step2.nothing();
+        assertThat(nothing, notNullValue());
+        assertThat(nothing, is(instanceOf(MockStep3.class)));
+        MockStep3 step3 = (MockStep3) nothing;
+        assertThat(step3.mockAlchemyHttp, is(mockHttp));
+        assertThat(step3.request.method, is(request.method));
+        assertThat(step3.request.body, is(MockRequest.NO_BODY));
+    }
+    
+    @Test
+    public void testStep2WithString()
+    {
+        MockStep2 step2 = new MockStep2(mockHttp, request);
+        
+    }
+    
+    @Test
+    public void testStep2WithPojo()
+    {
+        MockStep2 step2 = new MockStep2(mockHttp, request);
+    }
+    
 
 }
