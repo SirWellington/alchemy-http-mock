@@ -157,7 +157,7 @@ class MockAlchemyHttp implements AlchemyHttp
             made:
             for (MockRequest requestMade : requestsMade)
             {
-                if (matchEverythingBesidesTheBody(expectedRequest, requestMade))
+                if (requestsMatch(expectedRequest, requestMade))
                 {
                     continue expected;
                 }
