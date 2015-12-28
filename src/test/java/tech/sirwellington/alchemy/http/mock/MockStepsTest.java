@@ -17,7 +17,10 @@
 package tech.sirwellington.alchemy.http.mock;
 
 import java.net.URL;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +30,7 @@ import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep1;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep2;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep3;
+import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep4;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.GenerateDate;
@@ -36,6 +40,7 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -208,6 +213,23 @@ public class MockStepsTest
     {
         MockStep3 step3 = new MockStep3(mockHttp, request);
 
+    }
+    
+    @Test
+    public void testStep3Expecting()
+    {
+        MockStep3 step3 = new MockStep3(mockHttp, request);
+        List<Class<?>> classes = Arrays.asList(String.class, Date.class, Instant.class);
+        Class<?> expected = classes.stream().findAny().get();
+        
+        AlchemyRequest.Step4<?> expecting = step3.expecting(expected);
+        assertThat(expecting, notNullValue());
+        assertThat(expecting, is(instanceOf(MockStep4.class)));
+        
+        MockStep4<?> step4 = (MockStep4<?>) expecting;
+        assertThat(step4.expectedClass, sameInstance(expected));
+        assertThat(step4.mockAlchemyHttp, is(mockHttp));
+        assertThat(step4.request, is(request));
     }
 
     @Test
