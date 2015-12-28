@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,11 +219,11 @@ class MockAlchemyHttp implements AlchemyHttp
         return expected.body == actual.body;
     }
 
-    private boolean matchEverythingBesidesTheBody(MockRequest element, MockRequest request)
+    private boolean matchEverythingBesidesTheBody(MockRequest first, MockRequest second)
     {
-        return element.method == request.method &&
-               element.url.equals(request.url) &&
-               element.queryParams.equals(request.queryParams);
+        return Objects.equals(first.method, second.body) &&
+               Objects.equals(first.url, second.url) &&
+               Objects.equals(first.queryParams, second.queryParams);
     }
 
 }
