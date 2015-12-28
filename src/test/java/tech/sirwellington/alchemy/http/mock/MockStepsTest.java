@@ -16,6 +16,7 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
+import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep2;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep3;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.GenerateDate;
 import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
@@ -49,6 +51,9 @@ public class MockStepsTest
 
     @GeneratePojo
     private MockRequest request;
+    
+    @GenerateDate
+    private Date date;
 
     @Before
     public void setUp()
@@ -129,6 +134,7 @@ public class MockStepsTest
         AlchemyRequest.Step3 nothing = step2.nothing();
         assertThat(nothing, notNullValue());
         assertThat(nothing, is(instanceOf(MockStep3.class)));
+        
         MockStep3 step3 = (MockStep3) nothing;
         assertThat(step3.mockAlchemyHttp, is(mockHttp));
         assertThat(step3.request.method, is(request.method));
@@ -136,14 +142,30 @@ public class MockStepsTest
     }
     
     @Test
-    public void testStep2WithString()
+    public void testStep2WithPojo()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
         
+        AlchemyRequest.Step3 body = step2.body(date);
+        assertThat(body, notNullValue());
+        assertThat(body, is(instanceOf(MockStep3.class)));
+        
+        MockStep3 step3 = (MockStep3) body;
+        assertThat(step3.mockAlchemyHttp, is(mockHttp));
+        assertThat(step3.request.method, is(request.method));
+        assertThat(step3.request.body, is(date));
+    }
+    @Test
+    public void testStep2WithNullPojo()
+    {
+        MockStep2 step2 = new MockStep2(mockHttp, request);
+        
+        assertThrows(() -> step2.body(null))
+            .isInstanceOf(IllegalArgumentException.class);
     }
     
     @Test
-    public void testStep2WithPojo()
+    public void testStep2WithString()
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
     }
