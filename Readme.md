@@ -4,7 +4,7 @@ Alchemy HTTP Mock
 
 ## "I Came. I Saw. I RESTED."
 
-[![Build Status](https://travis-ci.org/SirWellington/alchemy-http-mock.svg)](https://travis-ci.org/SirWellington/alchemy-http-mock)
+[![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/)
 
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
