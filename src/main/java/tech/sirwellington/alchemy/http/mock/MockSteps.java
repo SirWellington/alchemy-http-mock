@@ -45,8 +45,6 @@ final class MockSteps
     {
         throw new IllegalAccessException("cannot instantiate");
     }
-    
-    
 
     @StepMachineDesign(role = STEP)
     static class MockStep1 implements AlchemyRequest.Step1
@@ -192,7 +190,7 @@ final class MockSteps
             checkThat(onSuccessCallback)
                 .usingMessage("Callback cannot be null")
                 .is(notNull());
-            
+
             return new MockStep5<>(mockAlchemyHttp, onSuccessCallback, HttpResponse.class, request);
         }
 
@@ -238,7 +236,7 @@ final class MockSteps
             checkThat(onSuccessCallback)
                 .usingMessage("callback cannot be null")
                 .is(notNull());
-            
+
             return new MockStep5<>(mockAlchemyHttp, onSuccessCallback, expectedClass, request);
         }
 
@@ -254,13 +252,13 @@ final class MockSteps
         final MockRequest request;
 
         MockStep5(MockAlchemyHttp mockAlchemyHttp,
-              AlchemyRequest.OnSuccess<R> onSuccessCallback,
-              Class<R> expectedClass,
-              MockRequest request)
+                  AlchemyRequest.OnSuccess<R> onSuccessCallback,
+                  Class<R> expectedClass,
+                  MockRequest request)
         {
-            checkThat(mockAlchemyHttp,onSuccessCallback, expectedClass, request)
+            checkThat(mockAlchemyHttp, onSuccessCallback, expectedClass, request)
                 .are(notNull());
-            
+
             this.mockAlchemyHttp = mockAlchemyHttp;
             this.onSuccessCallback = onSuccessCallback;
             this.expectedClass = expectedClass;
@@ -292,15 +290,15 @@ final class MockSteps
         final Class<R> expectedClass;
         final MockRequest request;
 
-        public MockStep6(MockAlchemyHttp mockAlchemyHttp, 
+        public MockStep6(MockAlchemyHttp mockAlchemyHttp,
                          AlchemyRequest.OnSuccess<R> onSuccessCallback,
-                         AlchemyRequest.OnFailure onFailureCallback, 
-                         Class<R> expectedClass, 
+                         AlchemyRequest.OnFailure onFailureCallback,
+                         Class<R> expectedClass,
                          MockRequest request)
         {
             checkThat(mockAlchemyHttp, onSuccessCallback, onFailureCallback, expectedClass, request)
                 .are(notNull());
-            
+
             this.mockAlchemyHttp = mockAlchemyHttp;
             this.onSuccessCallback = onSuccessCallback;
             this.onFailureCallback = onFailureCallback;
@@ -308,17 +306,15 @@ final class MockSteps
             this.request = request;
         }
 
-     
-
         @Override
         public void at(URL url)
         {
             checkThat(url)
                 .usingMessage("url cannot be null")
                 .is(notNull());
-            
+
             request.url = url;
-        
+
             R response;
             try
             {
