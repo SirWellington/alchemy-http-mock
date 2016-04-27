@@ -121,9 +121,10 @@ class MockAlchemyHttp implements AlchemyHttp
         requestsMade.add(request);
 
         checkThat(request)
+            .usingMessage("Unexpected Request: " + request)
             .is(expectedRequest());
 
-        Callable<?> operation = expectedActions.get(request);
+        Callable<?> operation = findMatchingActionFor(request);
 
         Object responseObject;
         try
