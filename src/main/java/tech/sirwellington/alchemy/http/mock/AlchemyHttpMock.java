@@ -22,8 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
@@ -45,7 +45,7 @@ public interface AlchemyHttpMock
         return new AlchemyHttpMockFactory();
     }
     
-    static void verifyAllRequestsMade(AlchemyHttp mockHttp) throws IllegalArgumentException
+    static void verifyAllRequestsMade(@Required AlchemyHttp mockHttp) throws IllegalArgumentException
     {
         checkThat(mockHttp)
             .usingMessage("Can only verify with AlchemyHttp generated from AlchemyHttpMock")
@@ -77,9 +77,9 @@ public interface AlchemyHttpMock
         
         At anyBody();
         
-        At body(@NonNull Object pojo);
+        At body(@Required Object pojo);
         
-        At body(@NonNull JsonElement jsonBody);
+        At body(@Required JsonElement jsonBody);
         
         At body(@NonEmpty String jsonString);
         
@@ -95,17 +95,17 @@ public interface AlchemyHttpMock
             return at(new URL(url));
         }
         
-        Then at(@NonNull URL url);
+        Then at(@Required URL url);
     }
     
     interface Then
     {
         
-        When thenDo(@NonNull Callable<?> operation);
+        When thenDo(@Required Callable<?> operation);
         
-        When thenThrow(@NonNull Exception ex);
+        When thenThrow(@Required Exception ex);
         
-        When thenReturn(@Nullable Object pojo);
+        When thenReturn(@Optional Object pojo);
         
         When thenReturnJson(JsonElement json);
         
