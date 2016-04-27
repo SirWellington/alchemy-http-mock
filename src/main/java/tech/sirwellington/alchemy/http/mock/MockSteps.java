@@ -180,7 +180,11 @@ class MockSteps
         @Override
         public AlchemyRequest.Step5<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccessCallback)
         {
-            return null;
+            checkThat(onSuccessCallback)
+                .usingMessage("Callback cannot be null")
+                .is(notNull());
+            
+            return new MockStep5<>(mockAlchemyHttp, onSuccessCallback, HttpResponse.class, request);
         }
 
         @Override
@@ -235,10 +239,10 @@ class MockSteps
     static class MockStep5<R> implements AlchemyRequest.Step5<R>
     {
 
-        private final MockAlchemyHttp mockAlchemyHttp;
-        private final AlchemyRequest.OnSuccess<R> onSuccessCallback;
-        private final Class<R> expectedClass;
-        private final MockRequest request;
+        final MockAlchemyHttp mockAlchemyHttp;
+        final AlchemyRequest.OnSuccess<R> onSuccessCallback;
+        final Class<R> expectedClass;
+        final MockRequest request;
 
         MockStep5(MockAlchemyHttp mockAlchemyHttp,
               AlchemyRequest.OnSuccess<R> onSuccessCallback,

@@ -37,11 +37,13 @@ import tech.sirwellington.alchemy.test.junit.runners.GenerateDate;
 import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
@@ -247,6 +249,37 @@ public class MockStepsTest
         
         assertThrows(() -> step3.at((URL) null))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
+    public void testStep4()
+    {
+        MockStep4<HttpResponse> step4 = new MockStep4<>(mockHttp, request, HttpResponse.class);
+        
+        AlchemyRequest.OnSuccess callback = mock(AlchemyRequest.OnSuccess.class);
+        AlchemyRequest.Step5 response = step4.onSuccess(callback);
+        
+        assertThat(response, notNullValue());
+        assertThat(response, is(instanceOf(MockSteps.MockStep5.class)));
+        
+        MockSteps.MockStep5 step5 = (MockSteps.MockStep5) response;
+        assertThat(step5.mockAlchemyHttp, is(mockHttp));
+        assertThat(step5.expectedClass, equalTo(HttpResponse.class));
+        assertThat(step5.onSuccessCallback, is(callback));
+        assertThat(step5.request, is(request));
+        
+    }
+    
+    @DontRepeat
+    @Test
+    public void testStep4WithBadArgs()
+    {
+        assertThrows(() -> new MockStep4<>(null, request, HttpResponse.class));
+        assertThrows(() -> new MockStep4<>(mockHttp, null, HttpResponse.class));
+        assertThrows(() -> new MockStep4<>(mockHttp, request, null));
+        
+        MockStep4<HttpResponse> instance = new MockStep4<>(mockHttp, request, HttpResponse.class);
+        assertThrows(() -> instance.onSuccess(null));
     }
     
 }
