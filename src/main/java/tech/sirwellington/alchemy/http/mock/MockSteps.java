@@ -19,6 +19,7 @@ package tech.sirwellington.alchemy.http.mock;
 import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
@@ -34,10 +35,18 @@ import static tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY;
  *
  * @author SirWellington
  */
-class MockSteps
+@NonInstantiable
+final class MockSteps
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(MockSteps.class);
+
+    MockSteps() throws IllegalAccessException
+    {
+        throw new IllegalAccessException("cannot instantiate");
+    }
+    
+    
 
     @StepMachineDesign(role = STEP)
     static class MockStep1 implements AlchemyRequest.Step1
@@ -277,11 +286,11 @@ class MockSteps
     static class MockStep6<R> implements AlchemyRequest.Step6<R>
     {
 
-        private final MockAlchemyHttp mockAlchemyHttp;
-        private final AlchemyRequest.OnSuccess<R> onSuccessCallback;
-        private final AlchemyRequest.OnFailure onFailureCallback;
-        private final Class<R> expectedClass;
-        private final MockRequest request;
+        final MockAlchemyHttp mockAlchemyHttp;
+        final AlchemyRequest.OnSuccess<R> onSuccessCallback;
+        final AlchemyRequest.OnFailure onFailureCallback;
+        final Class<R> expectedClass;
+        final MockRequest request;
 
         public MockStep6(MockAlchemyHttp mockAlchemyHttp, 
                          AlchemyRequest.OnSuccess<R> onSuccessCallback,

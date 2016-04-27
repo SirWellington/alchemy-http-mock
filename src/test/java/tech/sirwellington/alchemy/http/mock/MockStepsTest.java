@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
+import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep1;
 import tech.sirwellington.alchemy.http.mock.MockSteps.MockStep2;
@@ -75,6 +76,13 @@ public class MockStepsTest
     @Before
     public void setUp()
     {
+    }
+    
+    @DontRepeat
+    @Test
+    public void testCannotInstantiateClass()
+    {
+        assertThrows(() -> new MockSteps());
     }
 
     @DontRepeat
@@ -256,7 +264,7 @@ public class MockStepsTest
     {
         MockStep4<HttpResponse> step4 = new MockStep4<>(mockHttp, request, HttpResponse.class);
         
-        AlchemyRequest.OnSuccess callback = mock(AlchemyRequest.OnSuccess.class);
+        AlchemyRequest.OnSuccess callback = mock(OnSuccess.class);
         AlchemyRequest.Step5 response = step4.onSuccess(callback);
         
         assertThat(response, notNullValue());
@@ -282,4 +290,37 @@ public class MockStepsTest
         assertThrows(() -> instance.onSuccess(null));
     }
     
+    @Test
+    public void testStep5()
+    {
+        OnSuccess successCallback = mock(OnSuccess.class);
+        AlchemyRequest.OnFailure failurecallback = mock(AlchemyRequest.OnFailure.class);
+        
+        MockSteps.MockStep5<String> instance = new MockSteps.MockStep5<>(mockHttp, successCallback, String.class, request);
+        AlchemyRequest.Step6<String> response = instance.onFailure(failurecallback);
+        assertThat(response, notNullValue());
+        assertThat(response, is(instanceOf(MockSteps.MockStep6.class)));
+        
+        MockSteps.MockStep6 step6 = (MockSteps.MockStep6) response;
+        assertThat(step6.expectedClass, equalTo(String.class));
+        assertThat(step6.mockAlchemyHttp, is(mockHttp));
+        assertThat(step6.onSuccessCallback, is(successCallback));
+        assertThat(step6.onFailureCallback, is(failurecallback));
+        assertThat(step6.request, is(request));
+    }
+    
+    @DontRepeat
+    @Test
+    public void testStep5WithBadArgs()
+    {
+        assertThrows(() -> new MockSteps.MockStep5<>(null, AlchemyRequest.OnSuccess.NO_OP, String.class, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, null, String.class, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.NO_OP, null, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.NO_OP, String.class, null));
+
+        MockSteps.MockStep5<String> instance = new MockSteps.MockStep5<>(mockHttp, OnSuccess.NO_OP, String.class, request);
+        assertThrows(() -> instance.onFailure(null))
+            .isInstanceOf(IllegalArgumentException.class);
+
+    }
 }
