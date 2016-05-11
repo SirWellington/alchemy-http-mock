@@ -1,25 +1,25 @@
 Alchemy HTTP Mock
 ==============================================
-[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">](https://github.com/SirWellington/alchemy)
+[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="500">](https://github.com/SirWellington/alchemy)
 
-## "I Came. I Saw. I RESTED."
+## "Mock the World"
 
-[![Build Status](https://travis-ci.org/SirWellington/alchemy-http-mock.svg)](https://travis-ci.org/SirWellington/alchemy-http-mock)
+[![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/)
 
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
 
 Alchemy HTTP Mock makes Unit Testing with [Alchemy HTTP](https://github.com/SirWellington/alchemy-http) breezy.
-You can Stub Behavior using Mockito style syntax.
+This allows testing without hitting any actual networks.
 
-# API
-> Coming Soon...
+You can Stub Behavior using Mockito style syntax.
 
 # Download
 
 To use, simply add the following maven dependency.
 
 ## Release
+
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
@@ -29,7 +29,16 @@ To use, simply add the following maven dependency.
     <scope>test</scope>
 </dependency>
 ```
+
 ## Snapshot
+
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
 
 ```xml
 <dependency>
@@ -38,6 +47,32 @@ To use, simply add the following maven dependency.
 	<version>1.1-SNAPSHOT</version>
 </dependency>
 ```
+
+# API
+
+Use `AlchemyHttpMock` to create Mock Http Clients.
+
+```java
+
+AlchemyHttp http;
+
+//...
+
+http = AlchemyHttpMock.begin()
+            .whenPost()
+            .anyBody()
+            .at(url)
+            .thenReturnResponse(response)
+            .build();
+
+//Use mock...
+
+//Verify expected requests were made.
+AlchemyHttpMock.verifyAllRequestsMade(http);
+```
+
+
+
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http-mock/)
 
 
