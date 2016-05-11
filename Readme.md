@@ -13,14 +13,32 @@ Alchemy HTTP Mock makes Unit Testing with [Alchemy HTTP](https://github.com/SirW
 You can Stub Behavior using Mockito style syntax.
 
 # API
-> Coming Soon...
+
+```java
+
+AlchemyHttp http;
+
+//...
+
+http = AlchemyHttpMock.begin()
+            .whenPost()
+            .anyBody()
+            .at(url)
+            .thenReturnResponse(response)
+            .build();
+
+//Use mock...
+
+//Verify expected requests were made.
+AlchemyHttpMock.verifyAllRequestsMade(http);
+```
 
 # Download
 
 To use, simply add the following maven dependency.
 
 ## Release
-> NOTE: Still not released yet.
+
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
@@ -30,7 +48,16 @@ To use, simply add the following maven dependency.
     <scope>test</scope>
 </dependency>
 ```
+
 ## Snapshot
+
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
 
 ```xml
 <dependency>
