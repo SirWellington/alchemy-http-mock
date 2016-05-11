@@ -2,7 +2,7 @@ Alchemy HTTP Mock
 ==============================================
 [<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="500">](https://github.com/SirWellington/alchemy)
 
-## "I Came. I Saw. I RESTED."
+## "Mock the World"
 
 [![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/)
 
