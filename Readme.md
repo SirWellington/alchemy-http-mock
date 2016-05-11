@@ -10,28 +10,9 @@ Alchemy HTTP Mock
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
 
 Alchemy HTTP Mock makes Unit Testing with [Alchemy HTTP](https://github.com/SirWellington/alchemy-http) breezy.
+This allows testing without hitting any actual networks.
+
 You can Stub Behavior using Mockito style syntax.
-
-# API
-
-```java
-
-AlchemyHttp http;
-
-//...
-
-http = AlchemyHttpMock.begin()
-            .whenPost()
-            .anyBody()
-            .at(url)
-            .thenReturnResponse(response)
-            .build();
-
-//Use mock...
-
-//Verify expected requests were made.
-AlchemyHttpMock.verifyAllRequestsMade(http);
-```
 
 # Download
 
@@ -66,6 +47,32 @@ To use, simply add the following maven dependency.
 	<version>1.1-SNAPSHOT</version>
 </dependency>
 ```
+
+# API
+
+Use `AlchemyHttpMock` to create Mock Http Clients.
+
+```java
+
+AlchemyHttp http;
+
+//...
+
+http = AlchemyHttpMock.begin()
+            .whenPost()
+            .anyBody()
+            .at(url)
+            .thenReturnResponse(response)
+            .build();
+
+//Use mock...
+
+//Verify expected requests were made.
+AlchemyHttpMock.verifyAllRequestsMade(http);
+```
+
+
+
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http-mock/)
 
 
