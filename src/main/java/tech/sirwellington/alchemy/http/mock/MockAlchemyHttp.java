@@ -98,6 +98,10 @@ class MockAlchemyHttp implements AlchemyHttp
         {
             response = action.call();
         }
+        catch(AlchemyHttpException ex)
+        {
+            throw ex;
+        }
         catch (Exception ex)
         {
             throw new AlchemyHttpException(ex);
