@@ -40,6 +40,7 @@ import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.ANY_BODY;
+import static tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY;
 
 /**
  *
@@ -226,6 +227,11 @@ class MockAlchemyHttp implements AlchemyHttp
             return true;
         }
 
+        if (expected.body == NO_BODY)
+        {
+            return actual.body == null;
+        }
+        
         /*
          * The bodies will be both null, or both set to NO_BODY. == is intentionally used to compare instances.
          */
