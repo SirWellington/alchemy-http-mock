@@ -42,7 +42,12 @@ final class Actions
         return () -> null;
     }
     
-    static <T> Callable<JsonElement> returnPojo(T pojo, Gson gson)
+    static <T> Callable<T> returnPojo(T pojo)
+    {
+        return () -> pojo;
+    }
+    
+    static <T> Callable<JsonElement> returnPojoAsJSON(T pojo, Gson gson)
     {
         return () -> gson.toJsonTree(pojo);
     }

@@ -66,7 +66,18 @@ public class ActionsTest
     @Test
     public void testReturnPojo() throws Exception
     {
-        Callable<JsonElement> action = Actions.returnPojo(date, gson);
+        Callable<Date> action = Actions.returnPojo(date);
+        assertThat(action, notNullValue());
+
+        Date result = action.call();
+        assertThat(result, notNullValue());
+        assertThat(result, is(date));
+    }
+
+    @Test
+    public void testReturnPojoAsJSON() throws Exception
+    {
+        Callable<JsonElement> action = Actions.returnPojoAsJSON(date, gson);
         assertThat(action, notNullValue());
 
         JsonElement result = action.call();
@@ -77,7 +88,17 @@ public class ActionsTest
     @Test
     public void testReturnNullPojo() throws Exception
     {
-        Callable<JsonElement> action = Actions.returnPojo(null, gson);
+        Callable<Object> action = Actions.returnPojo(null);
+        assertThat(action, notNullValue());
+
+        Object result = action.call();
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void testReturnNullPojoAsJSON() throws Exception
+    {
+        Callable<JsonElement> action = Actions.returnPojoAsJSON(null, gson);
         assertThat(action, notNullValue());
 
         JsonElement result = action.call();
