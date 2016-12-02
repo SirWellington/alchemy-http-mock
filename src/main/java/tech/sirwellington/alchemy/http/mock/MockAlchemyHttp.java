@@ -135,6 +135,10 @@ class MockAlchemyHttp implements AlchemyHttp
         {
             responseObject = operation.call();
         }
+        catch(AlchemyHttpException ex)
+        {
+            throw ex;
+        }
         catch (Exception ex)
         {
             throw new AlchemyHttpException(ex);
