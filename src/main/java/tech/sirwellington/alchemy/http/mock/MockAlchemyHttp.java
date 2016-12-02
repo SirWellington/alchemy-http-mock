@@ -91,7 +91,7 @@ class MockAlchemyHttp implements AlchemyHttp
         
         requestsMade.add(request);
         
-        Callable<?> action = expectedActions.get(request);
+        Callable<?> action = findMatchingActionFor(request);
 
         Object response;
         try
