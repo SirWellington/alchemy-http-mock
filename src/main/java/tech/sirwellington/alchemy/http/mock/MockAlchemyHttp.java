@@ -229,7 +229,7 @@ class MockAlchemyHttp implements AlchemyHttp
 
         if (expected.body == NO_BODY)
         {
-            return actual.body == null;
+            return actual.body == null || actual.body == NO_BODY;
         }
         
         /*
