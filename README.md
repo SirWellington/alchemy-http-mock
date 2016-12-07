@@ -24,7 +24,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http-mock</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <!--  Designed for Unit Testing -->
     <scope>test</scope>
 </dependency>
@@ -44,7 +44,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http-mock</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -89,6 +89,9 @@ To build, just run a `mvn clean install` to compile and install to your local ma
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http-mock/issues).**
 
 # Release Notes
+
+## 1.1
++ Bugfixes and improvements
 
 ## 1.0
 + Initial Public Release

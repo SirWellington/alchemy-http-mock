@@ -28,13 +28,13 @@ import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
 
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.DELETE;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.GET;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.POST;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.PUT;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 
 class AlchemyHttpMockFactory implements AlchemyHttpMock,
                                      AlchemyHttpMock.When,
@@ -177,14 +177,23 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     }
 
     @Override
-    public When thenReturn(Object pojo)
+    public When thenReturnPOJO(Object pojo)
     {
-        actions.put(currentExpectedRequest, Actions.returnPojo(pojo, gson));
+        actions.put(currentExpectedRequest, Actions.returnPojo(pojo));
         currentExpectedRequest = null;
 
         return this;
     }
 
+    @Override
+    public When thenReturnPOJOAsJSON(Object pojo)
+    {
+        actions.put(currentExpectedRequest, Actions.returnPojoAsJSON(pojo, gson));
+        currentExpectedRequest = null;
+        
+        return this;
+    }
+    
     @Override
     public When thenReturnJson(JsonElement json)
     {

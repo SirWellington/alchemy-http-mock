@@ -18,6 +18,7 @@
 package tech.sirwellington.alchemy.http.mock;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Callable;
@@ -101,14 +102,52 @@ public interface AlchemyHttpMock
     interface Then
     {
         
+        /**
+         * Calls the specified function when the current request is executed, and returns the 
+         * output of this function.
+         * 
+         * @param operation
+         * @return 
+         */
         When thenDo(@Required Callable<?> operation);
         
+        /**
+         * Throws the specified Exception for the current request.
+         * @param ex
+         * @return 
+         */
         When thenThrow(@Required Exception ex);
         
-        When thenReturn(@Optional Object pojo);
+        /**
+         * Returns the specified POJO as is for the current request.
+         * 
+         * @param pojo
+         * @return 
+         */
+        When thenReturnPOJO(@Optional Object pojo);
         
+        /**
+         * Converts and returns the specified POJO as a {@linkplain JsonObject JSON Object}.
+         * 
+         * @param pojo The POJO to return, can be null.
+         * @return 
+         */
+        When thenReturnPOJOAsJSON(@Optional Object pojo);
+        
+        /**
+         * Returns the specified JSON as is for the current request.
+         * 
+         * @param json
+         * @return 
+         */
         When thenReturnJson(JsonElement json);
         
+        /**
+         * Returns the specified {@link HttpResponse} for the current request.
+         * 
+         * @param response
+         * @return 
+         */
         When thenReturnResponse(HttpResponse response);
         
     }
