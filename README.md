@@ -5,6 +5,7 @@ Alchemy HTTP Mock
 ## "Mock the World"
 
 [![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/)
+![Maven Central Version](http://img.shields.io/maven-central/v/tech.sirwellington.alchemy/alchemy-http-mock.svg)
 
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
