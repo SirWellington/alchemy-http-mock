@@ -91,6 +91,8 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
+## 2.0 Dependency Updates
+
 ## 1.1
 + Bugfixes and improvements
 
