@@ -3,3 +3,6 @@ nbactions.xml
 
 nb-configuration.xml
 /nbproject/
+
+/.idea
+*.iml
