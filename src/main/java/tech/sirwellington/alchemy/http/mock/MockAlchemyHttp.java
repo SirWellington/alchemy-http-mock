@@ -16,27 +16,25 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.collections.lists.Lists;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.http.AlchemyRequest;
-import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
+import tech.sirwellington.alchemy.http.*;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.test.Checks;
 
 import static java.lang.String.format;
 import static junit.framework.Assert.fail;
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.ANY_BODY;
@@ -53,14 +51,13 @@ class MockAlchemyHttp implements AlchemyHttp
 
     private final static Logger LOG = LoggerFactory.getLogger(MockAlchemyHttp.class);
 
-    private final Map<MockRequest, Callable<?>> expectedActions = Maps.newConcurrentMap();
+    private final Map<MockRequest, Callable<?>> expectedActions = new ConcurrentHashMap<>();
 
-    private final List<MockRequest> requestsMade = Lists.newArrayList();
+    private final List<MockRequest> requestsMade = Lists.create();
 
     MockAlchemyHttp(Map<MockRequest, Callable<?>> expectedActions)
     {
-        checkThat(expectedActions)
-            .is(notNull());
+        Checks.Internal.checkNotNull(expectedActions);
 
         this.expectedActions.putAll(expectedActions);
     }
@@ -87,7 +84,7 @@ class MockAlchemyHttp implements AlchemyHttp
     HttpResponse getResponseFor(MockRequest request) throws AlchemyHttpException
     {
         checkThat(request)
-            .is(notNull())
+            .is(Assertions.<MockRequest>nonNullReference())
             .is(expectedRequest());
 
         requestsMade.add(request);
@@ -183,13 +180,11 @@ class MockAlchemyHttp implements AlchemyHttp
         return request ->
         {
             checkThat(request)
-                .is(notNull());
+                .is(Assertions.nonNullReference());
 
             Callable<?> action = findMatchingActionFor(request);
 
-            checkThat(action)
-                .usingMessage("Request was unexpected: " + request)
-                .is(notNull());
+            Checks.Internal.checkNotNull(action, "");
         };
     }
 

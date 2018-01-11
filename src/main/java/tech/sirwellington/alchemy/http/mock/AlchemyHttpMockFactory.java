@@ -16,25 +16,21 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.http.HttpRequest;
-import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.http.*;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
-import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.DELETE;
-import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.GET;
-import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.POST;
-import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.PUT;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
+import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.*;
 
 class AlchemyHttpMockFactory implements AlchemyHttpMock,
                                      AlchemyHttpMock.When,
@@ -46,7 +42,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     private final static Logger LOG = LoggerFactory.getLogger(AlchemyHttpMockFactory.class);
     private final Gson gson = new Gson();
 
-    private final Map<MockRequest, Callable<?>> actions = Maps.newConcurrentMap();
+    private final Map<MockRequest, Callable<?>> actions = new ConcurrentHashMap<>();
 
     private MockRequest currentExpectedRequest;
     private HttpRequest httpRequest;
