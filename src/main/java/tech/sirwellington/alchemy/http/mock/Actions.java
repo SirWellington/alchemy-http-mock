@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -41,31 +41,31 @@ final class Actions
     {
         return () -> null;
     }
-    
+
     static <T> Callable<T> returnPojo(T pojo)
     {
         return () -> pojo;
     }
-    
+
     static <T> Callable<JsonElement> returnPojoAsJSON(T pojo, Gson gson)
     {
         return () -> gson.toJsonTree(pojo);
     }
-    
-    static Callable<JsonElement> returnJson(JsonElement json) 
+
+    static Callable<JsonElement> returnJson(JsonElement json)
     {
         checkThat(json)
             .is(notNull());
-        
+
         return () -> json;
     }
-    
+
     static Callable<HttpResponse> returnResponse(HttpResponse response)
     {
         checkThat(response)
             .usingMessage("Response cannot be null")
             .is(notNull());
-        
+
         return () -> response;
     }
 

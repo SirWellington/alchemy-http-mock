@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -89,9 +89,9 @@ class MockAlchemyHttp implements AlchemyHttp
         checkThat(request)
             .is(notNull())
             .is(expectedRequest());
-        
+
         requestsMade.add(request);
-        
+
         Callable<?> action = findMatchingActionFor(request);
 
         Object response;
@@ -184,9 +184,9 @@ class MockAlchemyHttp implements AlchemyHttp
         {
             checkThat(request)
                 .is(notNull());
-            
+
             Callable<?> action = findMatchingActionFor(request);
-            
+
             checkThat(action)
                 .usingMessage("Request was unexpected: " + request)
                 .is(notNull());
@@ -231,7 +231,7 @@ class MockAlchemyHttp implements AlchemyHttp
         {
             return actual.body == null || actual.body == NO_BODY;
         }
-        
+
         /*
          * The bodies will be both null, or both set to NO_BODY. == is intentionally used to compare instances.
          */

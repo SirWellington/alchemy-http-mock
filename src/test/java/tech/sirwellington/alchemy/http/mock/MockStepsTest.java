@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 Aroma Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -66,10 +66,10 @@ public class MockStepsTest
 
     @Mock
     private MockAlchemyHttp mockHttp;
-    
+
     @Mock
     private OnSuccess<HttpResponse> successCallback;
-    
+
     @Mock
     private OnFailure failureCallback;
 
@@ -78,18 +78,18 @@ public class MockStepsTest
 
     @GenerateDate
     private Date date;
-    
+
     @Mock
     private HttpResponse httpResponse;
 
     @Before
     public void setUp()
     {
-        
+
         when(mockHttp.getResponseFor(request))
             .thenReturn(httpResponse);
     }
-    
+
     @DontRepeat
     @Test
     public void testCannotInstantiateClass()
@@ -236,18 +236,18 @@ public class MockStepsTest
         MockStep3 step3 = new MockStep3(mockHttp, request);
 
     }
-    
+
     @Test
     public void testStep3Expecting()
     {
         MockStep3 step3 = new MockStep3(mockHttp, request);
         List<Class<?>> classes = Arrays.asList(String.class, Date.class, Instant.class);
         Class<?> expected = classes.stream().findAny().get();
-        
+
         AlchemyRequest.Step4<?> expecting = step3.expecting(expected);
         assertThat(expecting, notNullValue());
         assertThat(expecting, is(instanceOf(MockStep4.class)));
-        
+
         MockStep4<?> step4 = (MockStep4<?>) expecting;
         assertThat(step4.expectedClass, sameInstance(expected));
         assertThat(step4.mockAlchemyHttp, is(mockHttp));
@@ -259,36 +259,36 @@ public class MockStepsTest
     {
         MockStep3 step3 = new MockStep3(mockHttp, request);
         URL url = one(httpUrls());
-        
+
         when(mockHttp.getResponseFor(request))
             .thenReturn(httpResponse);
-        
+
         HttpResponse response = step3.at(url);
         assertThat(request.url, is(url));
         verify(mockHttp).getResponseFor(request);
-        
+
         assertThrows(() -> step3.at((URL) null))
             .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     public void testStep4()
     {
         MockStep4<HttpResponse> step4 = new MockStep4<>(mockHttp, request, HttpResponse.class);
-        
+
         AlchemyRequest.Step5 response = step4.onSuccess(successCallback);
-        
+
         assertThat(response, notNullValue());
         assertThat(response, is(instanceOf(MockSteps.MockStep5.class)));
-        
+
         MockSteps.MockStep5 step5 = (MockSteps.MockStep5) response;
         assertThat(step5.mockAlchemyHttp, is(mockHttp));
         assertThat(step5.expectedClass, equalTo(HttpResponse.class));
         assertThat(step5.onSuccessCallback, is(successCallback));
         assertThat(step5.request, is(request));
-        
+
     }
-    
+
     @DontRepeat
     @Test
     public void testStep4WithBadArgs()
@@ -296,20 +296,20 @@ public class MockStepsTest
         assertThrows(() -> new MockStep4<>(null, request, HttpResponse.class));
         assertThrows(() -> new MockStep4<>(mockHttp, null, HttpResponse.class));
         assertThrows(() -> new MockStep4<>(mockHttp, request, null));
-        
+
         MockStep4<HttpResponse> instance = new MockStep4<>(mockHttp, request, HttpResponse.class);
         assertThrows(() -> instance.onSuccess(null));
     }
-    
+
     @Test
     public void testStep5()
     {
-        
+
         MockSteps.MockStep5<HttpResponse> instance = new MockSteps.MockStep5<>(mockHttp, successCallback, HttpResponse.class, request);
         AlchemyRequest.Step6<HttpResponse> response = instance.onFailure(failureCallback);
         assertThat(response, notNullValue());
         assertThat(response, is(instanceOf(MockSteps.MockStep6.class)));
-        
+
         MockSteps.MockStep6 step6 = (MockSteps.MockStep6) response;
         assertThat(step6.expectedClass, equalTo(HttpResponse.class));
         assertThat(step6.mockAlchemyHttp, is(mockHttp));
@@ -317,7 +317,7 @@ public class MockStepsTest
         assertThat(step6.onFailureCallback, is(failureCallback));
         assertThat(step6.request, is(request));
     }
-    
+
     @DontRepeat
     @Test
     public void testStep5WithBadArgs()
@@ -332,7 +332,7 @@ public class MockStepsTest
             .isInstanceOf(IllegalArgumentException.class);
 
     }
-    
+
     @Test
     public void testStep6()
     {
@@ -344,25 +344,25 @@ public class MockStepsTest
 
         when(mockHttp.getResponseFor(request, HttpResponse.class))
             .thenReturn(httpResponse);
-        
+
         instance.at(request.url);
         verify(mockHttp).getResponseFor(request, HttpResponse.class);
         verify(successCallback).processResponse(httpResponse);
     }
-    
+
     @Test
     public void testStep6WhenFails()
     {
-        
+
         when(mockHttp.getResponseFor(request, HttpResponse.class))
             .thenThrow(new AlchemyHttpException());
-        
+
         MockSteps.MockStep6 instance = new MockSteps.MockStep6(mockHttp,
                                                                successCallback,
                                                                failureCallback,
                                                                HttpResponse.class,
                                                                request);
-        
+
         instance.at(request.url);
         verifyZeroInteractions(successCallback);
         verify(failureCallback).handleError(any());
@@ -381,13 +381,13 @@ public class MockStepsTest
         MockSteps.MockStep6 instance = new MockSteps.MockStep6(mockHttp, successCallback, failureCallback, HttpResponse.class, request);
         assertThrows(() -> instance.at((URL) null))
             .isInstanceOf(IllegalArgumentException.class);
-        
+
         assertThrows(() -> instance.at((String) null))
             .isInstanceOf(IllegalArgumentException.class);
-        
+
         assertThrows(() -> instance.at(""))
             .isInstanceOf(IllegalArgumentException.class);
-            
+
 
     }
 }
