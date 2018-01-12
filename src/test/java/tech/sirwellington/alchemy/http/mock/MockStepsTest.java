@@ -308,12 +308,12 @@ public class MockStepsTest
     @Test
     public void testStep5WithBadArgs()
     {
-        assertThrows(() -> new MockSteps.MockStep5<>(null, AlchemyRequest.OnSuccess.NO_OP, String.class, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(null, OnSuccess.Companion.getNO_OP(), Object.class, request));
         assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, null, String.class, request));
-        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.NO_OP, null, request));
-        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.NO_OP, String.class, null));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.INSTANCES.NO_OP, null, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.INSTANCES.NO_OP, Object.class, null));
 
-        MockSteps.MockStep5<String> instance = new MockSteps.MockStep5<>(mockHttp, OnSuccess.NO_OP, String.class, request);
+        MockSteps.MockStep5<Object> instance = new MockSteps.MockStep5<>(mockHttp, OnSuccess.INSTANCES.NO_OP, Object.class, request);
         assertThrows(() -> instance.onFailure(null))
             .isInstanceOf(IllegalArgumentException.class);
 

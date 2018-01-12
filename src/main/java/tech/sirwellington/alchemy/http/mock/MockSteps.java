@@ -16,19 +16,24 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
+import tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.*;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY;
 
 /**
@@ -91,6 +96,12 @@ final class MockSteps
             return new MockStep2(mockHttp, request);
         }
 
+        @NotNull
+        @Override
+        public byte[] download(URL url) throws IllegalArgumentException, AlchemyHttpException
+        {
+            return null;
+        }
     }
 
     @StepMachineDesign(role = STEP)
@@ -155,6 +166,44 @@ final class MockSteps
             this.request = request;
         }
 
+        @NotNull
+        @Override
+        public AlchemyRequest.Step3 accept(String s, String... strings) throws IllegalArgumentException
+        {
+            String tail = String.join(", ", strings);
+            String header = String.join(", ", s, tail);
+
+            return this.usingHeader("Accept", header);
+        }
+
+        @NotNull
+        @Override
+        public AlchemyRequest.Step3 usingQueryParam(String s, Number number) throws IllegalArgumentException
+        {
+            return usingQueryParam(s, number.toString());
+        }
+
+        @NotNull
+        @Override
+        public AlchemyRequest.Step3 usingQueryParam(String s, boolean b) throws IllegalArgumentException
+        {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public AlchemyRequest.Step3 followRedirects()
+        {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public HttpResponse at(String s) throws IllegalArgumentException, AlchemyHttpException, MalformedURLException
+        {
+            return this.at(new URL(s));
+        }
+
         @Override
         public AlchemyRequest.Step3 usingHeader(String key, String value) throws IllegalArgumentException
         {
@@ -184,14 +233,16 @@ final class MockSteps
             return mockAlchemyHttp.getResponseFor(request);
         }
 
+        @NotNull
         @Override
-        public AlchemyRequest.Step5<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccessCallback)
+        public AlchemyRequest.Step5<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccess)
         {
-            checkThat(onSuccessCallback)
-                .usingMessage("Callback cannot be null")
-                .is(notNull());
+            checkThat(onSuccess)
+                    .usingMessage("Callback cannot be null")
+                    .is(notNull());
 
-            return new MockStep5<>(mockAlchemyHttp, onSuccessCallback, HttpResponse.class, request);
+            return new MockStep5<>(mockAlchemyHttp, onSuccess, HttpResponse.class, request);
+
         }
 
         @Override
@@ -230,16 +281,23 @@ final class MockSteps
             return mockAlchemyHttp.getResponseFor(request, expectedClass);
         }
 
+        @NotNull
         @Override
-        public AlchemyRequest.Step5<R> onSuccess(AlchemyRequest.OnSuccess<R> onSuccessCallback)
+        public AlchemyRequest.Step5<R> onSuccess(AlchemyRequest.OnSuccess<R> onSuccess)
         {
-            checkThat(onSuccessCallback)
-                .usingMessage("callback cannot be null")
-                .is(notNull());
+            checkThat(onSuccess)
+                    .usingMessage("callback cannot be null")
+                    .is(notNull());
 
-            return new MockStep5<>(mockAlchemyHttp, onSuccessCallback, expectedClass, request);
+            return new MockStep5<>(mockAlchemyHttp, onSuccess, expectedClass, request);
         }
 
+        @Override
+        public R at(String s) throws AlchemyHttpException, MalformedURLException
+        {
+            checkThat(s).isA(validURL());
+            return at(new URL(s));
+        }
     }
 
     @StepMachineDesign(role = STEP)
@@ -328,6 +386,12 @@ final class MockSteps
             }
         }
 
+        @Override
+        public void at(String s) throws IllegalArgumentException, MalformedURLException
+        {
+            checkThat(s).isA(validURL());
+            at(new URL(s));
+        }
     }
 
 }
