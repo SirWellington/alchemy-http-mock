@@ -16,23 +16,25 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import kotlin.io.ByteStreamsKt;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
-import tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions;
 import tech.sirwellington.alchemy.http.AlchemyRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP;
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.*;
+import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.validURL;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY;
 
@@ -100,7 +102,28 @@ final class MockSteps
         @Override
         public byte[] download(URL url) throws IllegalArgumentException, AlchemyHttpException
         {
-            return null;
+            try
+            {
+                return ByteStreamsKt.readBytes(url.openStream(), 1024 * 4);
+            }
+            catch (IOException ex)
+            {
+                throw new OperationFailedException(ex);
+            }
+        }
+
+        @NotNull
+        @Override
+        public byte[] download(String s) throws IllegalArgumentException
+        {
+            try
+            {
+                return download(new URL(s));
+            }
+            catch (MalformedURLException ex)
+            {
+                throw new IllegalArgumentException(ex);
+            }
         }
     }
 
