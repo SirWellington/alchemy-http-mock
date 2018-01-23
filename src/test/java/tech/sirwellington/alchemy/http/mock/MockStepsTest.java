@@ -24,9 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.http.AlchemyRequest;
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps;
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure;
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.mock.MockSteps.*;
@@ -95,7 +95,7 @@ public class MockStepsTest
     {
         MockStep1 step1 = new MockStep1(mockHttp);
 
-        AlchemyRequest.Step3 get = step1.get();
+        AlchemyRequestSteps.Step3 get = step1.get();
         assertThat(get, notNullValue());
         assertThat(get, is(instanceOf(MockStep3.class)));
         MockStep3 mockStep3 = (MockStep3) get;
@@ -107,7 +107,7 @@ public class MockStepsTest
     {
         MockStep1 step1 = new MockStep1(mockHttp);
 
-        AlchemyRequest.Step2 post = step1.post();
+        AlchemyRequestSteps.Step2 post = step1.post();
         assertThat(post, notNullValue());
         assertThat(post, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) post;
@@ -119,7 +119,7 @@ public class MockStepsTest
     {
         MockStep1 step1 = new MockStep1(mockHttp);
 
-        AlchemyRequest.Step2 put = step1.put();
+        AlchemyRequestSteps.Step2 put = step1.put();
         assertThat(put, notNullValue());
         assertThat(put, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) put;
@@ -131,7 +131,7 @@ public class MockStepsTest
     {
         MockStep1 step1 = new MockStep1(mockHttp);
 
-        AlchemyRequest.Step2 delete = step1.delete();
+        AlchemyRequestSteps.Step2 delete = step1.delete();
         assertThat(delete, notNullValue());
         assertThat(delete, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) delete;
@@ -154,7 +154,7 @@ public class MockStepsTest
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
 
-        AlchemyRequest.Step3 nothing = step2.nothing();
+        AlchemyRequestSteps.Step3 nothing = step2.nothing();
         assertThat(nothing, notNullValue());
         assertThat(nothing, is(instanceOf(MockStep3.class)));
 
@@ -169,7 +169,7 @@ public class MockStepsTest
     {
         MockStep2 step2 = new MockStep2(mockHttp, request);
 
-        AlchemyRequest.Step3 body = step2.body(date);
+        AlchemyRequestSteps.Step3 body = step2.body(date);
         assertThat(body, notNullValue());
         assertThat(body, is(instanceOf(MockStep3.class)));
 
@@ -195,7 +195,7 @@ public class MockStepsTest
         MockStep2 step2 = new MockStep2(mockHttp, request);
 
         String string = one(strings());
-        AlchemyRequest.Step3 body = step2.body(string);
+        AlchemyRequestSteps.Step3 body = step2.body(string);
         assertThat(body, notNullValue());
         assertThat(body, is(instanceOf(MockStep3.class)));
 
@@ -230,7 +230,7 @@ public class MockStepsTest
         List<Class<?>> classes = Arrays.asList(String.class, Date.class, Instant.class);
         Class<?> expected = classes.stream().findAny().get();
 
-        AlchemyRequest.Step4<?> expecting = step3.expecting(expected);
+        AlchemyRequestSteps.Step4<?> expecting = step3.expecting(expected);
         assertThat(expecting, notNullValue());
         assertThat(expecting, is(instanceOf(MockStep4.class)));
 
@@ -262,7 +262,7 @@ public class MockStepsTest
     {
         MockStep4<HttpResponse> step4 = new MockStep4<>(mockHttp, request, HttpResponse.class);
 
-        AlchemyRequest.Step5 response = step4.onSuccess(successCallback);
+        AlchemyRequestSteps.Step5 response = step4.onSuccess(successCallback);
 
         assertThat(response, notNullValue());
         assertThat(response, is(instanceOf(MockSteps.MockStep5.class)));
@@ -292,7 +292,7 @@ public class MockStepsTest
     {
 
         MockSteps.MockStep5<HttpResponse> instance = new MockSteps.MockStep5<>(mockHttp, successCallback, HttpResponse.class, request);
-        AlchemyRequest.Step6<HttpResponse> response = instance.onFailure(failureCallback);
+        AlchemyRequestSteps.Step6<HttpResponse> response = instance.onFailure(failureCallback);
         assertThat(response, notNullValue());
         assertThat(response, is(instanceOf(MockSteps.MockStep6.class)));
 
@@ -308,12 +308,12 @@ public class MockStepsTest
     @Test
     public void testStep5WithBadArgs()
     {
-        assertThrows(() -> new MockSteps.MockStep5<>(null, AlchemyRequest.OnSuccess.NO_OP, String.class, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(null, OnSuccess.Companion.getNO_OP(), Object.class, request));
         assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, null, String.class, request));
-        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.NO_OP, null, request));
-        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequest.OnSuccess.NO_OP, String.class, null));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequestSteps.OnSuccess.INSTANCES.NO_OP, null, request));
+        assertThrows(() -> new MockSteps.MockStep5<>(mockHttp, AlchemyRequestSteps.OnSuccess.INSTANCES.NO_OP, Object.class, null));
 
-        MockSteps.MockStep5<String> instance = new MockSteps.MockStep5<>(mockHttp, OnSuccess.NO_OP, String.class, request);
+        MockSteps.MockStep5<Object> instance = new MockSteps.MockStep5<>(mockHttp, OnSuccess.INSTANCES.NO_OP, Object.class, request);
         assertThrows(() -> instance.onFailure(null))
             .isInstanceOf(IllegalArgumentException.class);
 

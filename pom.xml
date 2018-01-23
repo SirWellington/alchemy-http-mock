@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>alchemy-http-mock</artifactId>
-    <version>2.1-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
 
@@ -102,6 +102,12 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>alchemy-collections</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-generator</artifactId>
             <version>2.2</version>
             <scope>test</scope>
@@ -110,7 +116,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-http</artifactId>
-            <version>2.0</version>
+            <version>3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.collections.lists.Lists;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.assertions.Assertions;
@@ -62,12 +63,14 @@ class MockAlchemyHttp implements AlchemyHttp
         this.expectedActions.putAll(expectedActions);
     }
 
+    @Required
     @Override
     public AlchemyHttp usingDefaultHeader(String key, String value)
     {
         return this;
     }
 
+    @Required
     @Override
     public Map<String, String> getDefaultHeaders()
     {
@@ -75,7 +78,7 @@ class MockAlchemyHttp implements AlchemyHttp
     }
 
     @Override
-    public AlchemyRequest.Step1 go()
+    public AlchemyRequestSteps.Step1 go()
     {
         return new MockSteps.MockStep1(this);
     }
