@@ -99,7 +99,7 @@ public class MockStepsTest
         assertThat(get, notNullValue());
         assertThat(get, is(instanceOf(MockStep3.class)));
         MockStep3 mockStep3 = (MockStep3) get;
-        assertThat(mockStep3.request.method, is(MockRequest.Method.GET));
+        assertThat(mockStep3.getRequest().method, is(MockRequest.Method.GET));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MockStepsTest
         assertThat(post, notNullValue());
         assertThat(post, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) post;
-        assertThat(mockStep2.request.method, is(MockRequest.Method.POST));
+        assertThat(mockStep2.getRequest().method, is(MockRequest.Method.POST));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class MockStepsTest
         assertThat(put, notNullValue());
         assertThat(put, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) put;
-        assertThat(mockStep2.request.method, is(MockRequest.Method.PUT));
+        assertThat(mockStep2.getRequest().method, is(MockRequest.Method.PUT));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class MockStepsTest
         assertThat(delete, notNullValue());
         assertThat(delete, is(instanceOf(MockStep2.class)));
         MockStep2 mockStep2 = (MockStep2) delete;
-        assertThat(mockStep2.request.method, is(MockRequest.Method.DELETE));
+        assertThat(mockStep2.getRequest().method, is(MockRequest.Method.DELETE));
     }
 
     @DontRepeat
@@ -159,9 +159,9 @@ public class MockStepsTest
         assertThat(nothing, is(instanceOf(MockStep3.class)));
 
         MockStep3 step3 = (MockStep3) nothing;
-        assertThat(step3.mockAlchemyHttp, is(mockHttp));
-        assertThat(step3.request.method, is(request.method));
-        assertThat(step3.request.body, is(MockRequest.NO_BODY));
+        assertThat(step3.getMockAlchemyHttp(), is(mockHttp));
+        assertThat(step3.getRequest().method, is(request.method));
+        assertThat(step3.getRequest().body, is(MockRequest.NO_BODY));
     }
 
     @Test
@@ -174,9 +174,9 @@ public class MockStepsTest
         assertThat(body, is(instanceOf(MockStep3.class)));
 
         MockStep3 step3 = (MockStep3) body;
-        assertThat(step3.mockAlchemyHttp, is(mockHttp));
-        assertThat(step3.request.method, is(request.method));
-        assertThat(step3.request.body, is(date));
+        assertThat(step3.getMockAlchemyHttp(), is(mockHttp));
+        assertThat(step3.getRequest().method, is(request.method));
+        assertThat(step3.getRequest().body, is(date));
     }
 
     @DontRepeat
@@ -200,9 +200,9 @@ public class MockStepsTest
         assertThat(body, is(instanceOf(MockStep3.class)));
 
         MockStep3 step3 = (MockStep3) body;
-        assertThat(step3.mockAlchemyHttp, is(mockHttp));
-        assertThat(step3.request.method, is(request.method));
-        assertThat(step3.request.body, is(string));
+        assertThat(step3.getMockAlchemyHttp(), is(mockHttp));
+        assertThat(step3.getRequest().method, is(request.method));
+        assertThat(step3.getRequest().body, is(string));
     }
 
     @DontRepeat
@@ -235,9 +235,9 @@ public class MockStepsTest
         assertThat(expecting, is(instanceOf(MockStep4.class)));
 
         MockStep4<?> step4 = (MockStep4<?>) expecting;
-        assertThat(step4.expectedClass, sameInstance(expected));
-        assertThat(step4.mockAlchemyHttp, is(mockHttp));
-        assertThat(step4.request, is(request));
+        assertThat(step4.getExpectedClass(), sameInstance(expected));
+        assertThat(step4.getMockAlchemyHttp(), is(mockHttp));
+        assertThat(step4.getRequest(), is(request));
     }
 
     @Test
@@ -268,10 +268,10 @@ public class MockStepsTest
         assertThat(response, is(instanceOf(MockSteps.MockStep5.class)));
 
         MockSteps.MockStep5 step5 = (MockSteps.MockStep5) response;
-        assertThat(step5.mockAlchemyHttp, is(mockHttp));
-        assertThat(step5.expectedClass, equalTo(HttpResponse.class));
-        assertThat(step5.onSuccessCallback, is(successCallback));
-        assertThat(step5.request, is(request));
+        assertThat(step5.getMockAlchemyHttp(), is(mockHttp));
+        assertThat(step5.getExpectedClass(), equalTo(HttpResponse.class));
+        assertThat(step5.getOnSuccessCallback(), is(successCallback));
+        assertThat(step5.getRequest(), is(request));
 
     }
 
@@ -297,11 +297,11 @@ public class MockStepsTest
         assertThat(response, is(instanceOf(MockSteps.MockStep6.class)));
 
         MockSteps.MockStep6 step6 = (MockSteps.MockStep6) response;
-        assertThat(step6.expectedClass, equalTo(HttpResponse.class));
-        assertThat(step6.mockAlchemyHttp, is(mockHttp));
-        assertThat(step6.onSuccessCallback, is(successCallback));
-        assertThat(step6.onFailureCallback, is(failureCallback));
-        assertThat(step6.request, is(request));
+        assertThat(step6.getExpectedClass(), equalTo(HttpResponse.class));
+        assertThat(step6.getMockAlchemyHttp(), is(mockHttp));
+        assertThat(step6.getOnSuccessCallback(), is(successCallback));
+        assertThat(step6.getOnFailureCallback(), is(failureCallback));
+        assertThat(step6.getRequest(), is(request));
     }
 
     @DontRepeat
