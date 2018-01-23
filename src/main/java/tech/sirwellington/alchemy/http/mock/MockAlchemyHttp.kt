@@ -18,6 +18,7 @@ package tech.sirwellington.alchemy.http.mock
 
 import junit.framework.Assert.fail
 import sir.wellington.alchemy.collections.lists.Lists
+import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
@@ -35,7 +36,6 @@ import tech.sirwellington.alchemy.http.mock.MockRequest.Companion.ANY_BODY
 import tech.sirwellington.alchemy.http.mock.MockRequest.Companion.NO_BODY
 import java.lang.String.format
 import java.util.concurrent.Callable
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  *
@@ -43,10 +43,10 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Internal
 @StepMachineDesign(role = MACHINE)
-internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) : AlchemyHttp
+internal open class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) : AlchemyHttp
 {
 
-    private val expectedActions = ConcurrentHashMap<MockRequest, Callable<*>>()
+    private val expectedActions: MutableMap<MockRequest, Callable<*>> = Maps.createSynchronized()
 
     private val requestsMade = Lists.create<MockRequest>()
 
@@ -73,7 +73,7 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
 
     @Internal
     @Throws(AlchemyHttpException::class)
-    fun getResponseFor(request: MockRequest): HttpResponse
+    open fun getResponseFor(request: MockRequest): HttpResponse
     {
         checkThat(request).isA(expectedRequest())
 
@@ -106,7 +106,7 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
 
     @Internal
     @Throws(AlchemyHttpException::class)
-    fun <T> getResponseFor(request: MockRequest, expectedClass: Class<T>): T
+    open fun <T> getResponseFor(request: MockRequest, expectedClass: Class<T>): T
     {
         checkThat(request, expectedClass)
                 .are(notNull())
@@ -143,7 +143,7 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
     }
 
     @Internal
-    fun verifyAllRequestsMade()
+    open fun verifyAllRequestsMade()
     {
         expected@ for (expectedRequest in expectedActions.keys)
         {

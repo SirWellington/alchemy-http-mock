@@ -25,6 +25,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.verifyZeroInteractions
@@ -62,7 +63,7 @@ import java.util.Date
 class MockStepsTest
 {
 
-    @Mock
+    @Mock(answer = Answers.RETURNS_MOCKS)
     private lateinit var  mockHttp: MockAlchemyHttp
 
     @Mock
