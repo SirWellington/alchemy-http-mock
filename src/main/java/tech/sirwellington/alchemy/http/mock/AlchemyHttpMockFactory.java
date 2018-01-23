@@ -16,6 +16,7 @@
 
 package tech.sirwellington.alchemy.http.mock;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -25,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 import tech.sirwellington.alchemy.http.*;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
@@ -32,11 +34,10 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 import static tech.sirwellington.alchemy.http.mock.MockRequest.Method.*;
 
-class AlchemyHttpMockFactory implements AlchemyHttpMock,
-                                     AlchemyHttpMock.When,
-                                     AlchemyHttpMock.Body,
-                                     AlchemyHttpMock.At,
-                                     AlchemyHttpMock.Then
+class AlchemyHttpMockFactory extends AlchemyHttpMock implements AlchemyHttpMock.When,
+                                                                AlchemyHttpMock.Body,
+                                                                AlchemyHttpMock.At,
+                                                                AlchemyHttpMock.Then
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(AlchemyHttpMockFactory.class);
@@ -139,6 +140,14 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     }
 
     @Override
+    public Then at(String url) throws MalformedURLException
+    {
+        checkThat(url).usingMessage("empty url").is(nonEmptyString());
+
+        return at(new URL(url));
+    }
+
+    @Override
     public Then at(URL url)
     {
         checkThat(url)
@@ -155,7 +164,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     {
         checkThat(operation)
             .usingMessage("operation cannot be null")
-            .is(notNull());
+            .is(Assertions.<Callable<Object>>notNull());
 
         actions.put(currentExpectedRequest, operation);
         currentExpectedRequest = null;
@@ -166,7 +175,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     @Override
     public When thenThrow(Exception ex)
     {
-        actions.put(currentExpectedRequest, Actions.throwException(ex));
+        actions.put(currentExpectedRequest, Actions.INSTANCE.throwException(ex));
         currentExpectedRequest = null;
 
         return this;
@@ -175,7 +184,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     @Override
     public When thenReturnPOJO(Object pojo)
     {
-        actions.put(currentExpectedRequest, Actions.returnPojo(pojo));
+        actions.put(currentExpectedRequest, Actions.INSTANCE.returnPojo(pojo));
         currentExpectedRequest = null;
 
         return this;
@@ -184,7 +193,7 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     @Override
     public When thenReturnPOJOAsJSON(Object pojo)
     {
-        actions.put(currentExpectedRequest, Actions.returnPojoAsJSON(pojo, gson));
+        actions.put(currentExpectedRequest, Actions.INSTANCE.returnPojoAsJSON(pojo, gson));
         currentExpectedRequest = null;
 
         return this;
@@ -195,9 +204,9 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     {
         checkThat(json)
             .usingMessage("json cannot be null")
-            .is(notNull());
+            .is(Assertions.<JsonElement>notNull());
 
-        actions.put(currentExpectedRequest, Actions.returnJson(json));
+        actions.put(currentExpectedRequest, Actions.INSTANCE.returnJson(json));
         currentExpectedRequest = null;
 
         return this;
@@ -208,9 +217,9 @@ class AlchemyHttpMockFactory implements AlchemyHttpMock,
     {
         checkThat(response)
             .usingMessage("response cannot be null")
-            .is(notNull());
+            .is(Assertions.<HttpResponse>notNull());
 
-        actions.put(currentExpectedRequest, Actions.returnResponse(response));
+        actions.put(currentExpectedRequest, Actions.INSTANCE.returnResponse(response));
         currentExpectedRequest = null;
 
         return this;

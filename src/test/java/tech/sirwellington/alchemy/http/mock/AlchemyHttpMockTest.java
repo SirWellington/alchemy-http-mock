@@ -24,9 +24,9 @@ import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -44,23 +44,23 @@ public class AlchemyHttpMockTest
     @Before
     public void setUp()
     {
-        alchemyMock = AlchemyHttpMock.begin().build();
+        alchemyMock = AlchemyHttpMock.Companion.begin().build();
     }
 
     @Test
     public void testBegin()
     {
-        AlchemyHttpMock.When result = AlchemyHttpMock.begin();
+        AlchemyHttpMock.When result = AlchemyHttpMock.Companion.begin();
         assertThat(result, notNullValue());
     }
 
     @Test
     public void testVerifyAllRequestsMade()
     {
-        assertThrows(() -> AlchemyHttpMock.verifyAllRequestsMade(mockitoMock))
+        assertThrows(() -> AlchemyHttpMock.Companion.verifyAllRequestsMade(mockitoMock))
             .isInstanceOf(IllegalArgumentException.class);
 
-        AlchemyHttpMock.verifyAllRequestsMade(alchemyMock);
+        AlchemyHttpMock.Companion.verifyAllRequestsMade(alchemyMock);
     }
 
 }
