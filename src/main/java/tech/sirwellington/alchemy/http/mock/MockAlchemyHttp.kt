@@ -106,7 +106,7 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
 
     @Internal
     @Throws(AlchemyHttpException::class)
-    fun <T> getResponseFor(request: MockRequest, expectedClass: Class<T>): T?
+    fun <T> getResponseFor(request: MockRequest, expectedClass: Class<T>): T
     {
         checkThat(request, expectedClass)
                 .are(notNull())
@@ -119,7 +119,7 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
 
         val operation = findMatchingActionFor(request)
 
-        val responseObject: Any?
+        val responseObject: Any
         try
         {
             responseObject = operation!!.call()
@@ -133,16 +133,12 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
             throw AlchemyHttpException(ex)
         }
 
-        if (responseObject == null)
-        {
-            return responseObject
-        }
 
         checkThat(responseObject)
                 .usingMessage(format("Response Type Wanted: %s but actual: %s", responseObject.javaClass, expectedClass))
                 .isA(instanceOf(expectedClass))
 
-        return responseObject as T?
+        return responseObject as T
 
     }
 

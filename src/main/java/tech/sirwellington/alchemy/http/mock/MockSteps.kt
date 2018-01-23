@@ -16,7 +16,6 @@
 
 package tech.sirwellington.alchemy.http.mock
 
-import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
@@ -187,9 +186,9 @@ internal object MockSteps
         }
 
         @Throws(IllegalArgumentException::class, AlchemyHttpException::class, MalformedURLException::class)
-        override fun at(s: String): HttpResponse
+        override fun at(url: String): HttpResponse
         {
-            return this.at(URL(s))
+            return this.at(URL(url))
         }
 
         @Throws(IllegalArgumentException::class)
@@ -215,19 +214,19 @@ internal object MockSteps
         {
             checkThat(url)
                     .usingMessage("missing url")
-                    .`is`(notNull<Any>())
+                    .isA(nonNullReference())
 
             request.url = url
             return mockAlchemyHttp.getResponseFor(request)
         }
 
-        override fun onSuccess(onSuccess: AlchemyRequestSteps.OnSuccess<HttpResponse>): AlchemyRequestSteps.Step5<HttpResponse>
+        override fun onSuccess(onSuccessCallback: AlchemyRequestSteps.OnSuccess<HttpResponse>): AlchemyRequestSteps.Step5<HttpResponse>
         {
-            checkThat<OnSuccess<HttpResponse>>(onSuccess)
+            checkThat(onSuccessCallback)
                     .usingMessage("Callback cannot be null")
-                    .`is`(notNull<Any>())
+                    .isA(nonNullReference())
 
-            return MockStep5(mockAlchemyHttp, onSuccess, HttpResponse::class.java, request)
+            return MockStep5(mockAlchemyHttp, onSuccessCallback, HttpResponse::class.java, request)
 
         }
 
@@ -250,28 +249,31 @@ internal object MockSteps
         }
 
         @Throws(IllegalArgumentException::class, AlchemyHttpException::class)
-        override fun at(url: URL): R?
+        override fun at(url: URL): R
         {
-            checkThat(url).usingMessage("url cannot be null").`is`(notNull<Any>())
+            checkThat(url)
+                    .usingMessage("url cannot be null")
+                    .isA(nonNullReference())
+
             request.url = url
 
             return mockAlchemyHttp.getResponseFor(request, expectedClass)
         }
 
-        override fun onSuccess(onSuccess: AlchemyRequestSteps.OnSuccess<R>): AlchemyRequestSteps.Step5<R>
+        override fun onSuccess(onSuccessCallback: AlchemyRequestSteps.OnSuccess<R>): AlchemyRequestSteps.Step5<R>
         {
-            checkThat<OnSuccess<R>>(onSuccess)
+            checkThat(onSuccessCallback)
                     .usingMessage("callback cannot be null")
-                    .`is`(notNull<Any>())
+                    .isA(nonNullReference())
 
-            return MockStep5(mockAlchemyHttp, onSuccess, expectedClass, request)
+            return MockStep5(mockAlchemyHttp, onSuccessCallback, expectedClass, request)
         }
 
         @Throws(AlchemyHttpException::class, MalformedURLException::class)
-        override fun at(s: String): R?
+        override fun at(url: String): R
         {
-            checkThat(s).isA(validURL())
-            return at(URL(s))
+            checkThat(url).isA(validURL())
+            return at(URL(url))
         }
     }
 
@@ -290,9 +292,9 @@ internal object MockSteps
 
         override fun onFailure(onFailureCallback: AlchemyRequestSteps.OnFailure): AlchemyRequestSteps.Step6<R>
         {
-            checkThat<OnFailure>(onFailureCallback)
+            checkThat(onFailureCallback)
                     .usingMessage("callback cannot be null")
-                    .`is`(notNull<Any>())
+                    .isA(nonNullReference())
 
             return MockStep6(mockAlchemyHttp,
                              onSuccessCallback,
@@ -303,6 +305,7 @@ internal object MockSteps
 
     }
 
+    @StepMachineDesign(role = STEP)
     internal class MockStep6<R>(val mockAlchemyHttp: MockAlchemyHttp,
                                 val onSuccessCallback: AlchemyRequestSteps.OnSuccess<R>,
                                 val onFailureCallback: AlchemyRequestSteps.OnFailure,
@@ -320,7 +323,7 @@ internal object MockSteps
         {
             checkThat(url)
                     .usingMessage("url cannot be null")
-                    .`is`(notNull<Any>())
+                    .isA(nonNullReference())
 
             request.url = url
 
@@ -339,17 +342,11 @@ internal object MockSteps
         }
 
         @Throws(IllegalArgumentException::class, MalformedURLException::class)
-        override fun at(s: String)
+        override fun at(url: String)
         {
-            checkThat(s).isA(validURL())
-            at(URL(s))
+            checkThat(url).isA(validURL())
+            at(URL(url))
         }
-    }
-
-    companion object
-    {
-
-        private val LOG = LoggerFactory.getLogger(MockSteps::class.java)
     }
 
 }
