@@ -110,8 +110,8 @@ internal object MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    internal class MockStep2(private var mockAlchemyHttp: MockAlchemyHttp,
-                             private var request: MockRequest) : AlchemyRequestSteps.Step2
+    internal class MockStep2(internal var mockAlchemyHttp: MockAlchemyHttp,
+                             internal var request: MockRequest) : AlchemyRequestSteps.Step2
     {
 
         init
