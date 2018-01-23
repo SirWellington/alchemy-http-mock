@@ -37,9 +37,9 @@ class AlchemyHttpMockTest
 {
 
     @Mock
-    private val mockitoMock: AlchemyHttp? = null
+    private lateinit var mockitoMock: AlchemyHttp
 
-    private var alchemyMock: AlchemyHttp? = null
+    private lateinit var  alchemyMock: AlchemyHttp
 
     @Before
     fun setUp()
@@ -57,10 +57,10 @@ class AlchemyHttpMockTest
     @Test
     fun testVerifyAllRequestsMade()
     {
-        assertThrows { AlchemyHttpMock.verifyAllRequestsMade(mockitoMock!!) }
+        assertThrows { AlchemyHttpMock.verifyAllRequestsMade(mockitoMock) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
-        AlchemyHttpMock.verifyAllRequestsMade(alchemyMock!!)
+        AlchemyHttpMock.verifyAllRequestsMade(alchemyMock)
     }
 
 }
