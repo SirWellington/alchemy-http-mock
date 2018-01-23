@@ -60,11 +60,11 @@ AlchemyHttp http;
 //...
 
 http = AlchemyHttpMock.begin()
-            .whenPost()
-            .anyBody()
-            .at(url)
-            .thenReturnResponse(response)
-            .build();
+                      .whenPost()
+                      .anyBody()
+                      .at(url)
+                      .thenReturnResponse(response)
+                      .build();
 
 //Use mock...
 
