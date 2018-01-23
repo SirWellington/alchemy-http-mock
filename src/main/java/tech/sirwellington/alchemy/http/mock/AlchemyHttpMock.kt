@@ -23,8 +23,7 @@ import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.annotations.arguments.Optional
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign
-import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
-import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
+import tech.sirwellington.alchemy.annotations.designs.patterns.SingletonPattern
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.instanceOf
 import tech.sirwellington.alchemy.http.AlchemyHttp
@@ -38,9 +37,29 @@ import java.util.concurrent.Callable
  * @author SirWellington
  */
 @FluidAPIDesign
+@SingletonPattern
 @NonInstantiable
-open class AlchemyHttpMock
+object AlchemyHttpMock
 {
+
+    @JvmStatic
+    fun begin(): When
+    {
+        return AlchemyHttpMockFactory()
+    }
+
+    @JvmStatic
+    @Throws(IllegalArgumentException::class)
+    fun verifyAllRequestsMade(@Required mockHttp: AlchemyHttp)
+    {
+        checkThat(mockHttp)
+                .usingMessage("Can only verify with AlchemyHttp generated from AlchemyHttpMock")
+                .`is`(instanceOf(MockAlchemyHttp::class.java))
+
+        val mock = mockHttp as MockAlchemyHttp
+        mock.verifyAllRequestsMade()
+    }
+
 
     interface When
     {
@@ -134,27 +153,5 @@ open class AlchemyHttpMock
 
     }
 
-    companion object
-    {
-
-        @JvmStatic
-        @FactoryMethodPattern(role = Role.FACTORY_METHOD)
-        fun begin(): When
-        {
-            return AlchemyHttpMockFactory()
-        }
-
-        @JvmStatic
-        @Throws(IllegalArgumentException::class)
-        fun verifyAllRequestsMade(@Required mockHttp: AlchemyHttp)
-        {
-            checkThat(mockHttp)
-                    .usingMessage("Can only verify with AlchemyHttp generated from AlchemyHttpMock")
-                    .`is`(instanceOf(MockAlchemyHttp::class.java))
-
-            val mock = mockHttp as MockAlchemyHttp
-            mock.verifyAllRequestsMade()
-        }
-    }
 
 }
