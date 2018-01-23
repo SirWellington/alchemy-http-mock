@@ -26,9 +26,9 @@ import tech.sirwellington.alchemy.arguments.assertions.notNull
 import tech.sirwellington.alchemy.arguments.assertions.validURL
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps
 import tech.sirwellington.alchemy.http.HttpResponse
+import tech.sirwellington.alchemy.http.RequestMethod
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
-import tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
@@ -55,27 +55,27 @@ internal object MockSteps
 
         override fun get(): AlchemyRequestSteps.Step3
         {
-            request.method = MockRequest.Method.GET
+            request.method = RequestMethod.GET
             return MockStep3(mockHttp, request)
         }
 
         override fun post(): AlchemyRequestSteps.Step2
         {
-            request.method = MockRequest.Method.POST
+            request.method = RequestMethod.POST
 
             return MockStep2(mockHttp, request)
         }
 
         override fun put(): AlchemyRequestSteps.Step2
         {
-            request.method = MockRequest.Method.PUT
+            request.method = RequestMethod.PUT
 
             return MockStep2(mockHttp, request)
         }
 
         override fun delete(): AlchemyRequestSteps.Step2
         {
-            request.method = MockRequest.Method.DELETE
+            request.method = RequestMethod.DELETE
 
             return MockStep2(mockHttp, request)
         }
@@ -122,7 +122,7 @@ internal object MockSteps
 
         override fun nothing(): AlchemyRequestSteps.Step3
         {
-            request.body = NO_BODY
+            request.body = MockRequest.NO_BODY
 
             return MockStep3(mockAlchemyHttp, request)
         }
@@ -150,7 +150,8 @@ internal object MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    internal class MockStep3(val mockAlchemyHttp: MockAlchemyHttp, val request: MockRequest) : AlchemyRequestSteps.Step3
+    internal class MockStep3(val mockAlchemyHttp: MockAlchemyHttp,
+                             val request: MockRequest) : AlchemyRequestSteps.Step3
     {
 
         init

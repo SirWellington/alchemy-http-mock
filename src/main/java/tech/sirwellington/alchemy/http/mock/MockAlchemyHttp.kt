@@ -31,8 +31,8 @@ import tech.sirwellington.alchemy.http.AlchemyHttp
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps
 import tech.sirwellington.alchemy.http.HttpResponse
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
-import tech.sirwellington.alchemy.http.mock.MockRequest.ANY_BODY
-import tech.sirwellington.alchemy.http.mock.MockRequest.NO_BODY
+import tech.sirwellington.alchemy.http.mock.MockRequest.Companion.ANY_BODY
+import tech.sirwellington.alchemy.http.mock.MockRequest.Companion.NO_BODY
 import java.lang.String.format
 import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentHashMap
@@ -79,12 +79,12 @@ internal class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*>>) :
 
         requestsMade.add(request)
 
-        val action = findMatchingActionFor(request)
+        val action = findMatchingActionFor(request)!!
 
         val response: Any
         try
         {
-            response = action!!.call()
+            response = action.call()
         }
         catch (ex: AlchemyHttpException)
         {
