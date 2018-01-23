@@ -21,7 +21,7 @@
     <parent>
         <groupId>tech.sirwellington.alchemy</groupId>
         <artifactId>alchemy</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
     </parent>
 
     <artifactId>alchemy-http-mock</artifactId>
@@ -153,17 +153,20 @@
 
 
     <build>
+
         <!--Inherited from Parent POM-->
         <plugins>
+
+            <!--=======================-->
+            <!--KOTLIN PLUGIN-->
+            <!--=======================-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
+
     </build>
 
 
