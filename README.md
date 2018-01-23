@@ -91,6 +91,11 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
+## 3.0
++ Rewritten in Kotlin
++ Compatibility with Android
++ Lighter overall footprint
+
 ## 2.0 Dependency Updates
 
 ## 1.1
