@@ -20,13 +20,13 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isA
 import com.natpryce.hamkrest.present
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.verifyZeroInteractions
 import sir.wellington.alchemy.collections.lists.Lists
@@ -224,8 +224,9 @@ class MockStepsTest
         whenever(mockHttp.getResponseFor(request))
                 .thenReturn(httpResponse)
 
-//        val response = step3.at(url)
-//        assertThat(request.url, equalTo(url))
+        val response = step3.at(url)
+        assertThat(response, equalTo(httpResponse))
+        assertThat(request.url, equalTo(url))
         verify(mockHttp).getResponseFor(request)
 
     }
@@ -297,7 +298,7 @@ class MockStepsTest
 
         instance.at(request.url!!)
         verifyZeroInteractions(successCallback)
-        verify(failureCallback).handleError(ArgumentMatchers.any())
+        verify(failureCallback).handleError(any())
     }
 
     @DontRepeat
