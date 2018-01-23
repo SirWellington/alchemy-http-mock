@@ -75,7 +75,7 @@ class MockAlchemyHttp implements AlchemyHttp
     }
 
     @Override
-    public AlchemyRequest.Step1 go()
+    public AlchemyRequestSteps.Step1 go()
     {
         return new MockSteps.MockStep1(this);
     }

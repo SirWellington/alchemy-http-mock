@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
-import tech.sirwellington.alchemy.http.AlchemyRequest;
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
@@ -54,7 +54,7 @@ final class MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    static class MockStep1 implements AlchemyRequest.Step1
+    static class MockStep1 implements AlchemyRequestSteps.Step1
     {
 
         final MockAlchemyHttp mockHttp;
@@ -68,14 +68,14 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step3 get()
+        public AlchemyRequestSteps.Step3 get()
         {
             request.method = MockRequest.Method.GET;
             return new MockStep3(mockHttp, request);
         }
 
         @Override
-        public AlchemyRequest.Step2 post()
+        public AlchemyRequestSteps.Step2 post()
         {
             request.method = MockRequest.Method.POST;
 
@@ -83,7 +83,7 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step2 put()
+        public AlchemyRequestSteps.Step2 put()
         {
             request.method = MockRequest.Method.PUT;
 
@@ -91,7 +91,7 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step2 delete()
+        public AlchemyRequestSteps.Step2 delete()
         {
             request.method = MockRequest.Method.DELETE;
 
@@ -128,7 +128,7 @@ final class MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    static class MockStep2 implements AlchemyRequest.Step2
+    static class MockStep2 implements AlchemyRequestSteps.Step2
     {
 
         MockAlchemyHttp mockAlchemyHttp;
@@ -144,7 +144,7 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step3 nothing()
+        public AlchemyRequestSteps.Step3 nothing()
         {
             request.body = NO_BODY;
 
@@ -152,7 +152,7 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step3 body(String jsonString) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 body(String jsonString) throws IllegalArgumentException
         {
             checkThat(jsonString)
                 .usingMessage("jsonString cannot be empty")
@@ -164,7 +164,7 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step3 body(Object pojo) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 body(Object pojo) throws IllegalArgumentException
         {
             request.body = pojo;
 
@@ -174,7 +174,7 @@ final class MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    static class MockStep3 implements AlchemyRequest.Step3
+    static class MockStep3 implements AlchemyRequestSteps.Step3
     {
 
         final MockAlchemyHttp mockAlchemyHttp;
@@ -191,7 +191,7 @@ final class MockSteps
 
         @NotNull
         @Override
-        public AlchemyRequest.Step3 accept(String first, String... others) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 accept(String first, String... others) throws IllegalArgumentException
         {
             String tail = String.join(", ", others);
             String header = String.join(", ", first, tail);
@@ -201,21 +201,21 @@ final class MockSteps
 
         @NotNull
         @Override
-        public AlchemyRequest.Step3 usingQueryParam(String s, Number number) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 usingQueryParam(String s, Number number) throws IllegalArgumentException
         {
             return usingQueryParam(s, number.toString());
         }
 
         @NotNull
         @Override
-        public AlchemyRequest.Step3 usingQueryParam(String s, boolean b) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 usingQueryParam(String s, boolean b) throws IllegalArgumentException
         {
             return this;
         }
 
         @NotNull
         @Override
-        public AlchemyRequest.Step3 followRedirects()
+        public AlchemyRequestSteps.Step3 followRedirects()
         {
             return this;
         }
@@ -228,19 +228,19 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step3 usingHeader(String key, String value) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 usingHeader(String key, String value) throws IllegalArgumentException
         {
             return this;
         }
 
         @Override
-        public AlchemyRequest.Step3 usingQueryParam(String name, String value) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 usingQueryParam(String name, String value) throws IllegalArgumentException
         {
             return this;
         }
 
         @Override
-        public AlchemyRequest.Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
+        public AlchemyRequestSteps.Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
         {
             return this;
         }
@@ -258,7 +258,7 @@ final class MockSteps
 
         @NotNull
         @Override
-        public AlchemyRequest.Step5<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccess)
+        public AlchemyRequestSteps.Step5<HttpResponse> onSuccess(AlchemyRequestSteps.OnSuccess<HttpResponse> onSuccess)
         {
             checkThat(onSuccess)
                     .usingMessage("Callback cannot be null")
@@ -269,7 +269,7 @@ final class MockSteps
         }
 
         @Override
-        public <ResponseType> AlchemyRequest.Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws
+        public <ResponseType> AlchemyRequestSteps.Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws
             IllegalArgumentException
         {
             return new MockStep4<>(mockAlchemyHttp, this.request, classOfResponseType);
@@ -278,7 +278,7 @@ final class MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    static class MockStep4<R> implements AlchemyRequest.Step4<R>
+    static class MockStep4<R> implements AlchemyRequestSteps.Step4<R>
     {
 
         final MockAlchemyHttp mockAlchemyHttp;
@@ -306,7 +306,7 @@ final class MockSteps
 
         @NotNull
         @Override
-        public AlchemyRequest.Step5<R> onSuccess(AlchemyRequest.OnSuccess<R> onSuccess)
+        public AlchemyRequestSteps.Step5<R> onSuccess(AlchemyRequestSteps.OnSuccess<R> onSuccess)
         {
             checkThat(onSuccess)
                     .usingMessage("callback cannot be null")
@@ -324,16 +324,16 @@ final class MockSteps
     }
 
     @StepMachineDesign(role = STEP)
-    static class MockStep5<R> implements AlchemyRequest.Step5<R>
+    static class MockStep5<R> implements AlchemyRequestSteps.Step5<R>
     {
 
         final MockAlchemyHttp mockAlchemyHttp;
-        final AlchemyRequest.OnSuccess<R> onSuccessCallback;
+        final AlchemyRequestSteps.OnSuccess<R> onSuccessCallback;
         final Class<R> expectedClass;
         final MockRequest request;
 
         MockStep5(MockAlchemyHttp mockAlchemyHttp,
-                  AlchemyRequest.OnSuccess<R> onSuccessCallback,
+                  AlchemyRequestSteps.OnSuccess<R> onSuccessCallback,
                   Class<R> expectedClass,
                   MockRequest request)
         {
@@ -347,7 +347,7 @@ final class MockSteps
         }
 
         @Override
-        public AlchemyRequest.Step6<R> onFailure(AlchemyRequest.OnFailure onFailureCallback)
+        public AlchemyRequestSteps.Step6<R> onFailure(AlchemyRequestSteps.OnFailure onFailureCallback)
         {
             checkThat(onFailureCallback)
                 .usingMessage("callback cannot be null")
@@ -362,18 +362,18 @@ final class MockSteps
 
     }
 
-    static class MockStep6<R> implements AlchemyRequest.Step6<R>
+    static class MockStep6<R> implements AlchemyRequestSteps.Step6<R>
     {
 
         final MockAlchemyHttp mockAlchemyHttp;
-        final AlchemyRequest.OnSuccess<R> onSuccessCallback;
-        final AlchemyRequest.OnFailure onFailureCallback;
+        final AlchemyRequestSteps.OnSuccess<R> onSuccessCallback;
+        final AlchemyRequestSteps.OnFailure onFailureCallback;
         final Class<R> expectedClass;
         final MockRequest request;
 
         public MockStep6(MockAlchemyHttp mockAlchemyHttp,
-                         AlchemyRequest.OnSuccess<R> onSuccessCallback,
-                         AlchemyRequest.OnFailure onFailureCallback,
+                         AlchemyRequestSteps.OnSuccess<R> onSuccessCallback,
+                         AlchemyRequestSteps.OnFailure onFailureCallback,
                          Class<R> expectedClass,
                          MockRequest request)
         {
