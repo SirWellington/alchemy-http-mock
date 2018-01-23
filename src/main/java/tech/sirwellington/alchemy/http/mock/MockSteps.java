@@ -191,10 +191,10 @@ final class MockSteps
 
         @NotNull
         @Override
-        public AlchemyRequest.Step3 accept(String s, String... strings) throws IllegalArgumentException
+        public AlchemyRequest.Step3 accept(String first, String... others) throws IllegalArgumentException
         {
-            String tail = String.join(", ", strings);
-            String header = String.join(", ", s, tail);
+            String tail = String.join(", ", others);
+            String header = String.join(", ", first, tail);
 
             return this.usingHeader("Accept", header);
         }
