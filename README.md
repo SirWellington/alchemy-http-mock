@@ -5,6 +5,7 @@ Alchemy HTTP Mock
 ## "Mock the World"
 
 [![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP%20Mock/)
+![Maven Central Version](http://img.shields.io/maven-central/v/tech.sirwellington.alchemy/alchemy-http-mock.svg)
 
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
@@ -24,7 +25,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http-mock</artifactId>
-    <version>1.1</version>
+    <version>2.0</version>
     <!--  Designed for Unit Testing -->
     <scope>test</scope>
 </dependency>
@@ -44,7 +45,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http-mock</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>2.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -59,11 +60,11 @@ AlchemyHttp http;
 //...
 
 http = AlchemyHttpMock.begin()
-            .whenPost()
-            .anyBody()
-            .at(url)
-            .thenReturnResponse(response)
-            .build();
+                      .whenPost()
+                      .anyBody()
+                      .at(url)
+                      .thenReturnResponse(response)
+                      .build();
 
 //Use mock...
 
@@ -89,6 +90,13 @@ To build, just run a `mvn clean install` to compile and install to your local ma
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http-mock/issues).**
 
 # Release Notes
+
+## 3.0
++ Rewritten in Kotlin
++ Compatibility with Android
++ Lighter overall footprint
+
+## 2.0 Dependency Updates
 
 ## 1.1
 + Bugfixes and improvements
