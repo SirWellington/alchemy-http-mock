@@ -60,11 +60,11 @@ AlchemyHttp http;
 //...
 
 http = AlchemyHttpMock.begin()
-            .whenPost()
-            .anyBody()
-            .at(url)
-            .thenReturnResponse(response)
-            .build();
+                      .whenPost()
+                      .anyBody()
+                      .at(url)
+                      .thenReturnResponse(response)
+                      .build();
 
 //Use mock...
 
@@ -90,6 +90,11 @@ To build, just run a `mvn clean install` to compile and install to your local ma
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http-mock/issues).**
 
 # Release Notes
+
+## 3.0
++ Rewritten in Kotlin
++ Compatibility with Android
++ Lighter overall footprint
 
 ## 2.0 Dependency Updates
 
