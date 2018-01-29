@@ -106,9 +106,9 @@ class AlchemyHttpMockFactoryTest
         val mockHttp = http as MockAlchemyHttp
 
         val resultPojo = mockHttp.go()
-                                 .get()
-                                 .expecting<SamplePojo>()
-                                 .at(url)
+                .get()
+                .expecting<SamplePojo>()
+                .at(url)
 
         assertThat(resultPojo, equalTo(responsePojo))
     }
@@ -128,6 +128,39 @@ class AlchemyHttpMockFactoryTest
 
         assertThat(response, equalTo(responsePojo))
     }
+
+    @Test
+    fun testPostBody()
+    {
+        val http = instance.whenPost()
+                .body(bodyPojo)
+                .at(url)
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        val response = http.go().post().body(bodyPojo).at(url)
+
+        assertThat(response, equalTo(httpResponse))
+    }
+
+    @Test
+    fun testPostBodyExpectingPojo()
+    {
+        val http = instance.whenPost()
+                .body(bodyPojo)
+                .at(url)
+                .thenReturnPOJO(responsePojo)
+                .build()
+
+        val response = http.go()
+                .post()
+                .body(bodyPojo)
+                .expecting<SamplePojo>()
+                .at(url)
+
+        assertThat(response, equalTo(responsePojo))
+    }
+
 
     data class SamplePojo(val name: String,
                           val age: Int,
