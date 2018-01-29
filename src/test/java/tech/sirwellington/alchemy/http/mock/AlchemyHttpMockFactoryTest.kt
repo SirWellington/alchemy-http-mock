@@ -25,6 +25,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import tech.sirwellington.alchemy.generator.NetworkGenerators
 import tech.sirwellington.alchemy.http.HttpResponse
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.expecting
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -32,6 +33,7 @@ import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
 import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import tech.sirwellington.alchemy.test.kotlin.assertThrows
 import java.net.URL
 
 @RunWith(AlchemyTestRunner::class)
@@ -234,6 +236,73 @@ class AlchemyHttpMockFactoryTest
         assertThat(response, equalTo(httpResponse))
     }
 
+    @Test
+    fun testDeleteNoBody()
+    {
+        val http = instance.whenDelete()
+                .noBody()
+                .at(url)
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        val response = http.go()
+                .delete()
+                .noBody()
+                .at(url)
+
+        assertThat(response, equalTo(httpResponse))
+    }
+
+    @Test
+    fun testDeleteWithBody()
+    {
+        val http = instance.whenDelete()
+                .body(bodyPojo)
+                .at(url)
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        val response = http.go()
+                .delete()
+                .body(bodyPojo)
+                .at(url)
+
+        assertThat(response, equalTo(httpResponse))
+    }
+
+    @Test
+    fun testDeleteExpectingPojo()
+    {
+        val http = instance.whenDelete()
+                .anyBody()
+                .atAnyURL()
+                .thenReturnPOJO(responsePojo)
+                .build()
+
+        val response = http.go()
+                .delete()
+                .body(bodyPojo)
+                .expecting<SamplePojo>()
+                .at(url)
+
+        assertThat(response, equalTo(responsePojo
+                                    ))
+    }
+
+    @Test
+    fun testGetWhenURLsDiffer()
+    {
+        val secondUrl = NetworkGenerators.httpUrls().get()
+
+        val http = instance.whenGet()
+                .anyBody()
+                .at(url)
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        assertThrows { http.go().get().at(secondUrl) }
+                .isInstanceOf(AlchemyHttpException::class.java)
+    }
 
     data class SamplePojo(val name: String,
                           val age: Int,
