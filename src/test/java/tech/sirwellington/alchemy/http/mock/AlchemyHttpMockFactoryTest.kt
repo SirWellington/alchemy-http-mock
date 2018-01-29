@@ -31,9 +31,11 @@ import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
 import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
+import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.net.URL
 
 @RunWith(AlchemyTestRunner::class)
+@Repeat(25)
 class AlchemyHttpMockFactoryTest
 {
 
@@ -159,6 +161,42 @@ class AlchemyHttpMockFactoryTest
                 .at(url)
 
         assertThat(response, equalTo(responsePojo))
+    }
+
+    @Test
+    fun testPostBodyAtAnyURL()
+    {
+        val http = instance.whenPost()
+                .anyBody()
+                .atAnyURL()
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        val response = http.go()
+                .post()
+                .body(bodyString)
+                .at(url)
+
+        assertThat(response, equalTo(httpResponse))
+    }
+
+    @Test
+    fun testPutBody()
+    {
+        val http = instance.whenPut()
+                .body(bodyPojo)
+                .at(url)
+                .thenReturnPOJO(responsePojo)
+                .build()
+
+        val response = http.go()
+                .put()
+                .body(bodyPojo)
+                .expecting<SamplePojo>()
+                .at(url)
+
+        assertThat(response, equalTo(responsePojo))
+
     }
 
 
