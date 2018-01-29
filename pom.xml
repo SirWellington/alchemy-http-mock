@@ -126,7 +126,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-http</artifactId>
-            <version>3.0</version>
+            <version>3.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
