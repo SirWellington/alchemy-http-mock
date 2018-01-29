@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import tech.sirwellington.alchemy.generator.NetworkGenerators
 import tech.sirwellington.alchemy.http.HttpResponse
 import tech.sirwellington.alchemy.http.expecting
 import tech.sirwellington.alchemy.test.hamcrest.notNull
@@ -110,6 +111,22 @@ class AlchemyHttpMockFactoryTest
                                  .at(url)
 
         assertThat(resultPojo, equalTo(responsePojo))
+    }
+
+    @Test
+    fun testGetAtAnyURL()
+    {
+        val randomUrl = NetworkGenerators.httpUrls().get()
+
+        val http = instance.whenGet()
+                .noBody()
+                .atAnyURL()
+                .thenReturnPOJO(responsePojo)
+                .build()
+
+        val response = http.go().get().expecting<SamplePojo>().at(randomUrl)
+
+        assertThat(response, equalTo(responsePojo))
     }
 
     data class SamplePojo(val name: String,
