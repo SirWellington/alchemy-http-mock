@@ -22,6 +22,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import tech.sirwellington.alchemy.http.expecting
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
@@ -82,10 +83,10 @@ class AlchemyHttpMockFactoryTest
 
         val mockHttp = http as MockAlchemyHttp
 
-        val resultPojo: SamplePojo = mockHttp.go()
-                                             .get()
-                                             .expecting(SamplePojo::class.java)
-                                             .at(url)
+        val resultPojo = mockHttp.go()
+                                 .get()
+                                 .expecting<SamplePojo>()
+                                 .at(url)
 
         assertThat(resultPojo, equalTo(responsePojo))
     }
