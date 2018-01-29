@@ -199,6 +199,41 @@ class AlchemyHttpMockFactoryTest
 
     }
 
+    @Test
+    fun testPutBodyAtAnyURL()
+    {
+        val http = instance.whenPut()
+                .body(bodyPojo)
+                .atAnyURL()
+                .thenReturnPOJO(responsePojo)
+                .build()
+
+        val response = http.go()
+                .put()
+                .body(bodyPojo)
+                .expecting<SamplePojo>()
+                .at(url)
+
+        assertThat(response, equalTo(responsePojo))
+    }
+
+    @Test
+    fun testPutAnyBody()
+    {
+        val http = instance.whenPut()
+                .anyBody()
+                .atAnyURL()
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        val response = http.go()
+                .put()
+                .body(bodyString)
+                .at(url)
+
+        assertThat(response, equalTo(httpResponse))
+    }
+
 
     data class SamplePojo(val name: String,
                           val age: Int,
