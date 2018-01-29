@@ -25,15 +25,14 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import tech.sirwellington.alchemy.generator.NetworkGenerators
 import tech.sirwellington.alchemy.http.HttpResponse
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.expecting
+import tech.sirwellington.alchemy.test.hamcrest.isNull
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
 import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import tech.sirwellington.alchemy.test.kotlin.assertThrows
 import java.net.URL
 
 @RunWith(AlchemyTestRunner::class)
@@ -246,9 +245,9 @@ class AlchemyHttpMockFactoryTest
                 .build()
 
         val response = http.go()
-                .delete()
-                .noBody()
-                .at(url)
+                           .delete()
+                           .noBody()
+                           .at(url)
 
         assertThat(response, equalTo(httpResponse))
     }
@@ -300,8 +299,8 @@ class AlchemyHttpMockFactoryTest
                 .thenReturnResponse(httpResponse)
                 .build()
 
-        assertThrows { http.go().get().at(secondUrl) }
-                .isInstanceOf(AlchemyHttpException::class.java)
+        val response = http.go().get().at(secondUrl)
+        assertThat(response, isNull)
     }
 
     data class SamplePojo(val name: String,

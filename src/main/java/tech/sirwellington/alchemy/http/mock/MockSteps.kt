@@ -120,7 +120,7 @@ internal object MockSteps
                     .are(notNull())
         }
 
-        override fun nothing(): AlchemyRequestSteps.Step3
+        override fun noBody(): AlchemyRequestSteps.Step3
         {
             request.body = MockRequest.NO_BODY
 
