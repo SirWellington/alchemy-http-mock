@@ -23,16 +23,17 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.generator.NetworkGenerators
 import tech.sirwellington.alchemy.http.HttpResponse
 import tech.sirwellington.alchemy.http.expecting
-import tech.sirwellington.alchemy.test.hamcrest.isNull
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
 import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import tech.sirwellington.alchemy.test.kotlin.assertThrows
 import java.net.URL
 
 @RunWith(AlchemyTestRunner::class)
@@ -294,13 +295,17 @@ class AlchemyHttpMockFactoryTest
         val secondUrl = NetworkGenerators.httpUrls().get()
 
         val http = instance.whenGet()
-                .anyBody()
-                .at(url)
-                .thenReturnResponse(httpResponse)
-                .build()
+                           .anyBody()
+                           .at(url)
+                           .thenReturnResponse(httpResponse)
+                           .build()
 
-        val response = http.go().get().at(secondUrl)
-        assertThat(response, isNull)
+        assertThrows {
+            http.go()
+                .get()
+                .at(secondUrl)
+        }.isInstanceOf(FailedAssertionException::class.java)
+
     }
 
     data class SamplePojo(val name: String,

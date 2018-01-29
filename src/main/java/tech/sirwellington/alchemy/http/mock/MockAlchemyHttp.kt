@@ -168,7 +168,9 @@ internal open class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*
             checkThat(request).isA(nonNullReference())
 
             val action = findMatchingActionFor(request)
-            checkThat(action).isA(nonNullReference())
+            checkThat(action)
+                    .usingMessage("request was not expected: [$request]")
+                    .isA(nonNullReference())
         }
     }
 
