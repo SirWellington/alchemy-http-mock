@@ -22,6 +22,8 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import tech.sirwellington.alchemy.http.HttpResponse
 import tech.sirwellington.alchemy.http.expecting
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -46,6 +48,9 @@ class AlchemyHttpMockFactoryTest
     @GeneratePojo
     private lateinit var responsePojo: SamplePojo
 
+    @Mock
+    private lateinit var httpResponse: HttpResponse
+
     private lateinit var instance: AlchemyHttpMockFactory
 
     @Before
@@ -69,7 +74,23 @@ class AlchemyHttpMockFactoryTest
     }
 
     @Test
-    fun testWhenGetAtUrl()
+    fun testGetAtUrl()
+    {
+        val http = instance.whenGet()
+                .noBody()
+                .at(url)
+                .thenReturnResponse(httpResponse)
+                .build()
+
+        val response = http.go()
+                .get()
+                .at(url)
+
+        assertThat(response, equalTo(httpResponse))
+    }
+
+    @Test
+    fun testGetAtUrlExpectingPojo()
     {
         val http = instance.whenGet()
                 .noBody()
