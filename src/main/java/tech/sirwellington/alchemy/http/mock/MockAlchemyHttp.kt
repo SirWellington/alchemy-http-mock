@@ -210,7 +210,7 @@ internal open class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*
         //If the URL is null, this means any
         if (expected.url != MockRequest.ANY_URL)
         {
-            if (expected.url != actual.url)
+            if (expected.url.toString() != actual.url.toString())
             {
                 return false
             }
