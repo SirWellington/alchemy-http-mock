@@ -274,16 +274,16 @@ class AlchemyHttpMockFactoryTest
     fun testDeleteExpectingPojo()
     {
         val http = instance.whenDelete()
-                .anyBody()
-                .atAnyURL()
-                .thenReturnPOJO(responsePojo)
-                .build()
+                           .anyBody()
+                           .atAnyURL()
+                           .thenReturnPOJO(responsePojo)
+                           .build()
 
         val response = http.go()
-                .delete()
-                .body(bodyPojo)
-                .expecting<SamplePojo>()
-                .at(url)
+                           .delete()
+                           .body(bodyPojo)
+                           .expecting<SamplePojo>()
+                           .at(url)
 
         assertThat(response, equalTo(responsePojo
                                     ))
@@ -306,6 +306,23 @@ class AlchemyHttpMockFactoryTest
                 .at(secondUrl)
         }.isInstanceOf(FailedAssertionException::class.java)
 
+    }
+
+    @Test
+    fun testGetWhenBodiesDiffer()
+    {
+        val http = instance.whenPost()
+                           .body(bodyString)
+                           .at(url)
+                           .thenReturnResponse(httpResponse)
+                           .build()
+
+        assertThrows {
+            http.go()
+                .post()
+                .body(bodyPojo)
+                .at(url)
+        }.isInstanceOf(FailedAssertionException::class.java)
     }
 
     data class SamplePojo(val name: String,
