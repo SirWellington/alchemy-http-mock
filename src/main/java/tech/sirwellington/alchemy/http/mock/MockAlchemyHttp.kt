@@ -16,6 +16,7 @@
 
 package tech.sirwellington.alchemy.http.mock
 
+import com.google.gson.JsonNull
 import junit.framework.Assert.fail
 import sir.wellington.alchemy.collections.lists.Lists
 import sir.wellington.alchemy.collections.maps.Maps
@@ -193,37 +194,50 @@ internal open class MockAlchemyHttp(expectedActions: Map<MockRequest, Callable<*
 
     private fun requestsMatch(expected: MockRequest, actual: MockRequest): Boolean
     {
-        val matchEverythingBesidesTheBody = matchEverythingBesidesTheBody(expected, actual)
 
-        if (!matchEverythingBesidesTheBody)
+        if (expected.method != actual.method)
         {
             return false
         }
 
+        if (expected.queryParams != actual.queryParams)
+        {
+            return false
+        }
+
+        //If the URL is null, this means any
+        if (expected.url != MockRequest.ANY_URL)
+        {
+            if (expected.url != actual.url)
+            {
+                return false
+            }
+        }
+
+        //Now comparing bodies
+
+        //Any body matches to anything
         if (expected.body === ANY_BODY)
         {
             return true
         }
 
-        return if (expected.body === NO_BODY)
+        if (expected.body === NO_BODY)
         {
-            actual.body == null || actual.body === NO_BODY
-        }
-        else
-        {
-            expected.body === actual.body
+            return actual.body == null ||
+                   actual.body === NO_BODY ||
+                   actual.body === JsonNull.INSTANCE
         }
 
-        /*
-         * The bodies will be both null, or both set to NO_BODY. == is intentionally used to compare instances.
-         */
-    }
+        //Try a shallow equality first
+        if (expected.body === actual.body)
+        {
+            return true
+        }
 
-    private fun matchEverythingBesidesTheBody(first: MockRequest, second: MockRequest): Boolean
-    {
-        return first.method == second.method &&
-               first.url == second.url &&
-               first.queryParams == second.queryParams
+        //Then fallback to equals() if all else fails
+        return expected.body == actual.body
+
     }
 
 

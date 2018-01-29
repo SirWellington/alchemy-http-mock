@@ -35,11 +35,14 @@ internal data class MockRequest(internal var url: URL? = null,
     companion object
     {
 
-        @JvmStatic
+        @JvmField
         val NO_BODY = Any()
 
-        @JvmStatic
+        @JvmField
         val ANY_BODY = Any()
+
+        @JvmField
+        val ANY_URL = URL("file://ALCHEMY/HTTP/MOCK/ANY")
     }
 
 }

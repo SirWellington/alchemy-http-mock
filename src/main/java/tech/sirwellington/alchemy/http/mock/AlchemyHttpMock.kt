@@ -48,6 +48,12 @@ object AlchemyHttpMock
         return AlchemyHttpMockFactory()
     }
 
+    /**
+     * Alternative naming to [begin].
+     */
+    @JvmStatic
+    fun start() = begin()
+
     @JvmStatic
     @Throws(IllegalArgumentException::class)
     fun verifyAllRequestsMade(@Required mockHttp: AlchemyHttp)
@@ -98,6 +104,8 @@ object AlchemyHttpMock
         fun at(@NonEmpty url: String): Then
 
         fun at(@Required url: URL): Then
+
+        fun atAnyURL(): Then
     }
 
     interface Then

@@ -152,6 +152,13 @@ internal class AlchemyHttpMockFactory : AlchemyHttpMock.When, AlchemyHttpMock.Bo
         return this
     }
 
+    override fun atAnyURL(): Then
+    {
+        currentExpectedRequest?.url = MockRequest.ANY_URL
+
+        return this
+    }
+
     override fun thenDo(operation: Callable<*>): When
     {
         checkThat(operation)

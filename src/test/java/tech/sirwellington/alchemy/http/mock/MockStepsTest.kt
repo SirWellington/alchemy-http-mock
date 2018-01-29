@@ -84,7 +84,6 @@ class MockStepsTest
     @Before
     fun setUp()
     {
-
         whenever(mockHttp.getResponseFor(request))
                 .thenReturn(httpResponse)
     }
