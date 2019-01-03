@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -27,11 +27,7 @@ import tech.sirwellington.alchemy.generator.NetworkGenerators
 import tech.sirwellington.alchemy.http.HttpResponse
 import tech.sirwellington.alchemy.http.expecting
 import tech.sirwellington.alchemy.test.hamcrest.notNull
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString
-import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import tech.sirwellington.alchemy.test.junit.runners.*
 import tech.sirwellington.alchemy.test.kotlin.assertThrows
 import java.net.URL
 
