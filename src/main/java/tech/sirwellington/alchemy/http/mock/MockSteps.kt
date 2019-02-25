@@ -24,6 +24,7 @@ import tech.sirwellington.alchemy.arguments.assertions.nonNullReference
 import tech.sirwellington.alchemy.arguments.assertions.notNull
 import tech.sirwellington.alchemy.arguments.assertions.validURL
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step2
 import tech.sirwellington.alchemy.http.HttpResponse
 import tech.sirwellington.alchemy.http.RequestMethod
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
@@ -50,6 +51,12 @@ internal object MockSteps
         init
         {
             checkThat(mockHttp).isA(nonNullReference())
+        }
+
+        override fun method(requestMethod: RequestMethod): Step2
+        {
+            request.method = requestMethod
+            return MockStep2(mockHttp, request)
         }
 
         override fun get(): AlchemyRequestSteps.Step3
